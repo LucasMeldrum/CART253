@@ -9,6 +9,8 @@
 
 "use strict";
 
+document.title = "Give me an extra grade! <3"
+
 /**
  * Create a canvas, hides the cursor
 */
@@ -26,7 +28,7 @@ function setup() {
 */
 function draw() {
     // Make the background black (specified as RGB)
-    background(1, 2, 3);
+    background(1, 0, 0);
 
     // Draw a pyramid
     // How many levels for the pyramid
@@ -42,7 +44,7 @@ function draw() {
         // No line around the levels
         noStroke();
         // Set the fill colour to our shade (RGB)
-        fill(shade, shade, 0);
+        fill(shade, shade, 1);
         // Draw rectangles from the centre
         rectMode(CENTER);
         // Draw the rectangle in the centre of the canvas
@@ -58,7 +60,7 @@ function draw() {
     // No line around the shape
     noStroke();
     // Make it red (RGB)
-    fill(255, 0, 0);
+    fill(45, 125, 999);
     // Draw a 100x100 circle at the mouse position
     ellipse(mouseX, mouseY, 100, 100);
     pop();
