@@ -2,7 +2,7 @@
  * Instructions Challenge
  * Lucas Meldrum
  * 
- * This project encompasses a beautiful night landscape with weird flashing stars and scary eyes
+ * This project encompasses a beautiful night landscape with weird flashing stars and a scary face
  */
 
 "use strict";
@@ -12,13 +12,13 @@ function setup() {
     createCanvas(720, 480);
 }
 
-// Add a background and draw the night landscape including the moon, stars, trees, and eyes?
+// Add a background and draw the night landscape including the moon, stars, trees, and scary face?
 function draw() {
     drawNightSkye();
     drawStars();
     drawTallTrees();
     drawMoon();
-    drawScaryEyes();
+    drawScaryFace();
 }
 
 // Draw the night skye
@@ -64,9 +64,10 @@ function drawMoon() {
 }
 
 // Draw scary red eyes
-function drawScaryEyes() {
+function drawScaryFace() {
     drawEyesOutside();
     drawPupils();
+    drawSmile();
 }
 
 // Draw red pupils
@@ -89,4 +90,13 @@ function drawEyesOutside() {
     fill(25);
     ellipse(420,240,40,40);
     pop();
+}
+
+function drawSmile() {
+    push();
+    noStroke();
+    fill(25);
+    ellipse(375, 280, 65, 65);
+    fill(50);
+    ellipse(375, 260, 60, 60);
 }
