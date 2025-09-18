@@ -1,24 +1,59 @@
 /**
- * Title of Project
- * Author Name
- * 
- * HOW EMBARRASSING! I HAVE NO DESCRIPTION OF MY PROJECT!
- * PLEASE REMOVE A GRADE FROM MY WORK IF IT'S GRADED!
+ * Mr. Furious
+ * Pippin Barr
+ *
+ * A guy who becomes visibly furious!
  */
 
 "use strict";
 
-/**
- * OH LOOK I DIDN'T DESCRIBE SETUP!!
-*/
-function setup() {
+// Our friend Mr. Furious
+let mrFurious = {
+    // Position and size
+    x: 200,
+    y: 200,
+    size: 100,
+    // Colour
+    fill: {
+        r: 255,
+        g: 225,
+        b: 225
+  }
+};
 
+// The sky
+let sky = {
+    // Position and size
+    x: 400,
+    y: 400,
+    // Color 
+    fill: {
+        r: 255,
+        g: 225,
+        b: 225
+    }
 }
 
+/**
+ * Create the canvas
+ */
+function setup() {
+  createCanvas(sky.x, sky.y);
+}
 
 /**
- * OOPS I DIDN'T DESCRIBE WHAT MY DRAW DOES!
-*/
+ * Draw (and update) Mr. Furious
+ */
 function draw() {
+  background(160, 180, 200);
+  
+  mrFurious.fill.g -= 0.5;
+  mrFurious.fill.b -= 0.5;
 
+  // Draw Mr. Furious as a coloured circle
+  push();
+  noStroke();
+  fill(mrFurious.fill.r, mrFurious.fill.g, mrFurious.fill.b);
+  ellipse(mrFurious.x, mrFurious.y, mrFurious.size);
+  pop();
 }
