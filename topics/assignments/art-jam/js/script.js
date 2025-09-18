@@ -16,7 +16,8 @@
 function setup() {
   createCanvas(500, 500, WEBGL);
 
-  describe('A white box on a gray background.');
+  angleMode(DEGREES);
+  normalMaterial();
 }
 
 function draw() {
@@ -27,7 +28,7 @@ function draw() {
 
   // Draw the box.
   push();
-  translate(0,-150,0);
+  translate(0,-100,0);
   box(50);
   pop();
   
@@ -42,7 +43,7 @@ function draw() {
   pop();
 
   push();
-  translate(0,150,0);
+  translate(0,100,0);
   box(50);
   pop();
 
@@ -63,4 +64,15 @@ function draw() {
   push();
   box(10);
   pop();
+
+  push();
+  rotateWithFrameCount();
+  box(100);
+  pop();
+
+  function rotateWithFrameCount() {
+  rotateZ(frameCount);
+  rotateX(frameCount);
+  rotateY(frameCount);
+}
 }
