@@ -27,12 +27,7 @@ function draw() {
 
   // Draw the box.
   push();
-  translate(-100,-150,0);
-  box(50);
-  pop();
-
-  push();
-  translate(100,-150,0);
+  translate(0,-150,0);
   box(50);
   pop();
   
@@ -47,16 +42,7 @@ function draw() {
   pop();
 
   push();
-  translate(100,150,0);
-  box(50);
-  pop();
-
-  push();
-  translate(-100,150,0);
-  box(50);
-  pop();
-
-  push();
+  translate(0,150,0);
   box(50);
   pop();
 
@@ -70,6 +56,11 @@ function draw() {
   box(50);
   pop();
 
+  push();
+  box(50);
+  pop();
 
-  
+  push();
+  box(10);
+  pop();
 }
