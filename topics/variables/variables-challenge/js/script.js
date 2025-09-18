@@ -109,7 +109,7 @@ function draw() {
 
   // Draw the bird 
   // Body
-  push();
+  push();3
   noStroke();
   fill(bird.fill.r, bird.fill.g, bird.fill.b);
   triangle(bird.body.x1, bird.body.y1, 
