@@ -58,6 +58,7 @@ function draw() {
   pop();
 
   push();
+  rotateWithFrameCount();
   box(50);
   pop();
 
@@ -65,9 +66,13 @@ function draw() {
   box(10);
   pop();
 
+  // Sphere
   push();
   rotateWithFrameCount();
-  box(100);
+
+  // Show black stroke to help visualize movement
+  stroke(0);
+  sphere(75);
   pop();
 
   function rotateWithFrameCount() {
