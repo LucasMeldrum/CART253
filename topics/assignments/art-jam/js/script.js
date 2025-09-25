@@ -75,6 +75,58 @@ function draw() {
   sphere(75);
   pop();
 
+  // Draw the box.
+  push();
+  translate(0,-200,0);
+  box(50);
+  pop();
+  
+  push();
+  translate(200,0,0);
+  box(50);
+  pop();
+
+  push();
+  translate(-200,0,0);
+  box(50);
+  pop();
+
+  push();
+  translate(0,200,0);
+  box(50);
+  pop();
+
+  push();
+  translate(0,0,200);
+  box(50);
+  pop();
+
+  push();
+  translate(0,0,-200);
+  box(50);
+  pop();
+
+  // Sphere
+  push();
+  rotateWithFrameCount();
+
+  // Show black stroke to help visualize movement
+  stroke(0);
+  translate(0,0,250);
+  sphere(75);
+  pop();
+
+   // Sphere
+  push();
+  rotateWithFrameCount();
+
+  // Show black stroke to help visualize movement
+  stroke(0);
+  translate(0,250,0);
+  sphere(75);
+  pop();
+
+
   function rotateWithFrameCount() {
   rotateZ(frameCount);
   rotateX(frameCount);
