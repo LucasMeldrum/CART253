@@ -8,128 +8,44 @@
 
 "use strict";
 
-/**
- * 
-*/
-// Click and drag the mouse to view the scene from different angles.
-
 function setup() {
   createCanvas(500, 500, WEBGL);
-
   angleMode(DEGREES);
   normalMaterial();
 }
 
 function draw() {
-  background(95,50,115);
+  background(95, 50, 115);
 
-  // Enable orbiting with the mouse.
-  orbitControl();
+  orbitControl(); // Allow mouse rotation
 
-  // Draw the box.
+  // Draw main face-like sphere using little spheres
   push();
-  translate(0,-100,0);
-  box(50);
+  drawSphere(0, 0, 0, 200, 15); 
   pop();
-  
-  push();
-  translate(100,0,0);
-  box(50);
-  pop();
+}
 
-  push();
-  translate(-100,0,0);
-  box(50);
-  pop();
+function drawSphere(x, y, z, radius, detail) {
+  translate(x, y, z);
 
-  push();
-  translate(0,100,0);
-  box(50);
-  pop();
+  // Loop through latitude and longitude
+  for (let lat = -90; lat <= 90; lat += detail) {
+    for (let lon = 0; lon < 360; lon += detail) {
+      let px = radius * cos(lat) * cos(lon);
+      let py = radius * sin(lat);
+      let pz = radius * cos(lat) * sin(lon);
 
-  push();
-  translate(0,0,100);
-  box(50);
-  pop();
-
-  push();
-  translate(0,0,-100);
-  box(50);
-  pop();
-
-  push();
-  rotateWithFrameCount();
-  box(50);
-  pop();
-
-  push();
-  box(10);
-  pop();
-
-  // Sphere
-  push();
-  rotateWithFrameCount();
-
-  // Show black stroke to help visualize movement
-  stroke(0);
-  sphere(75);
-  pop();
-
-  // Draw the box.
-  push();
-  translate(0,-200,0);
-  box(50);
-  pop();
-  
-  push();
-  translate(200,0,0);
-  box(50);
-  pop();
-
-  push();
-  translate(-200,0,0);
-  box(50);
-  pop();
-
-  push();
-  translate(0,200,0);
-  box(50);
-  pop();
-
-  push();
-  translate(0,0,200);
-  box(50);
-  pop();
-
-  push();
-  translate(0,0,-200);
-  box(50);
-  pop();
-
-  // Sphere
-  push();
-  rotateWithFrameCount();
-
-  // Show black stroke to help visualize movement
-  stroke(0);
-  translate(0,0,250);
-  sphere(75);
-  pop();
-
-   // Sphere
-  push();
-  rotateWithFrameCount();
-
-  // Show black stroke to help visualize movement
-  stroke(0);
-  translate(0,250,0);
-  sphere(75);
-  pop();
-
+      push();
+      translate(px, py, pz);
+      stroke(241,194,125);
+      sphere(7.5); // small sphere size
+      pop();
+    }
+  }
+}
 
   function rotateWithFrameCount() {
   rotateZ(frameCount);
   rotateX(frameCount);
   rotateY(frameCount);
-}
 }
