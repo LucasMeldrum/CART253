@@ -11,11 +11,38 @@
 // Pulse time
 let pulse = 0;
 
-// Pupils
+// Pupil offset for following mouse
 let pupilOffsetX, pupilOffsetY;
 
-// Minisphere color
-let miniSphereColor = {
+// Bigsphere
+let bigSphere = {
+  radius: 200,
+  amount: 8,
+  // Eyes
+  eyes: {
+    radius: 200,
+    sizes: {
+    pupil: 25,
+    sclera: 10
+    },
+    fills: {
+      sclera: 0,
+      pupil: 255
+    }
+  }
+};
+
+// Minisphere 
+let miniSphere = {
+  radius: 7.5,
+  // Eyes
+  eyes: {
+    radius: 7.5,
+    fills: {
+      sclera: 0,
+      pupil: 255,
+    }
+  },
   fills: {
     r: 0,
     g: 0,
@@ -32,33 +59,35 @@ let backgroundColor = {
   }
 };
 
+// Setup the canvas, in 3D with normal material for the spheres
 function setup() {
   createCanvas(500, 500, WEBGL);
   angleMode(DEGREES);
   normalMaterial();
 }
 
+// Draw, gets called once a frame
 function draw() {
   // Copy current sphere colors
-  backgroundColor.fills.r = miniSphereColor.fills.r;
-  backgroundColor.fills.g = miniSphereColor.fills.g;
-  backgroundColor.fills.b = miniSphereColor.fills.b;
+  backgroundColor.fills.r = miniSphere.fills.r;
+  backgroundColor.fills.g = miniSphere.fills.g;
+  backgroundColor.fills.b = miniSphere.fills.b;
 
   // Whichever color dominates the background is reduced by half
-  if (miniSphereColor.fills.r > miniSphereColor.fills.g && miniSphereColor.fills.r > miniSphereColor.fills.b) {
-    backgroundColor.fills.r = miniSphereColor.fills.r * 0.5;
+  if (miniSphere.fills.r > miniSphere.fills.g && miniSphere.fills.r > miniSphere.fills.b) {
+    backgroundColor.fills.r = miniSphere.fills.r * 0.5;
   }
-  else if (miniSphereColor.fills.g > miniSphereColor.fills.r && miniSphereColor.fills.g > miniSphereColor.fills.b) {
-    backgroundColor.fills.g = miniSphereColor.fills.g * 0.5;
+  else if (miniSphere.fills.g > miniSphere.fills.r && miniSphere.fills.g > miniSphere.fills.b) {
+    backgroundColor.fills.g = miniSphere.fills.g * 0.5;
   }
-  else if (miniSphereColor.fills.b > miniSphereColor.fills.r && miniSphereColor.fills.b > miniSphereColor.fills.g) {
-    backgroundColor.fills.b = miniSphereColor.fills.b * 0.5;
+  else if (miniSphere.fills.b > miniSphere.fills.r && miniSphere.fills.b > miniSphere.fills.g) {
+    backgroundColor.fills.b = miniSphere.fills.b * 0.5;
   }
 
   // Change background based on conditionals
   background(backgroundColor.fills.r, backgroundColor.fills.g, backgroundColor.fills.b);
 
-  // Pulse
+  // Pulse based on frame count and decrease (50 to 0)
   if (pulse > 0) {
     scale(1 + sin(frameCount * 10) * 0.2);
     pulse--;
@@ -69,100 +98,93 @@ function draw() {
 
   // Draw main face sphere using little spheres
   push();
-  drawSphere(0, 0, 0, 200, 8);
+  drawSphere();
   pop();
 
   // Draw eyes
-  drawEyes(0, 0, 0, 200);
-
-  resetMatrix();
-  textAlign(CENTER, CENTER);
-  textSize(32); 
-  fill(255); 
-  text("Click!", width / 2, height - 50);
+  drawEyes();
 }
 
 // Draw all spheres
-function drawSphere(x, y, z, radius, amount) {
-  for (let lat = -90; lat <= 90; lat += amount) {
-    for (let lon = 0; lon < 360; lon += amount) {
-      let px = radius * cos(lat) * cos(lon);
-      let py = radius * sin(lat);
-      let pz = radius * cos(lat) * sin(lon);
+function drawSphere() {
+  for (let lat = -90; lat <= 90; lat += bigSphere.amount) {
+    for (let lon = 0; lon < 360; lon += bigSphere.amount) {
+      let px = bigSphere.radius * cos(lat) * cos(lon);
+      let py = bigSphere.radius * sin(lat);
+      let pz = bigSphere.radius * cos(lat) * sin(lon);
 
       push();
       translate(px, py, pz);
-
       // Body of the mini-sphere
-      fill(miniSphereColor.fills.r, miniSphereColor.fills.g, miniSphereColor.fills.b);
-      sphere(7.5);
-
+      fill(miniSphere.fills.r, miniSphere.fills.g, miniSphere.fills.b);
+      sphere(miniSphere.radius);
       // Add tiny eyes
-      drawMiniEyes(7.5);
+      drawMiniEyes();
       pop();
     }
   }
 }
 
-// Pulse on mouse press
+// Pulse on mouse press (0-50)
 function mousePressed() {
   pulse = 50;
 
   // Update .fills values with random colors
-  miniSphereColor.fills.r = random(255);
-  miniSphereColor.fills.g = random(255);
-  miniSphereColor.fills.b = random(255);
+  miniSphere.fills.r = random(255);
+  miniSphere.fills.g = random(255);
+  miniSphere.fills.b = random(255);
 }
 
 // Draws eyes on a mini-sphere
-function drawMiniEyes(r) {
-  pupilOffsetX = map(mouseX, 0, width, -r / 4, r / 4);
-  pupilOffsetY = map(mouseY, 0, height, -r / 4, r / 4);
+function drawMiniEyes() {
+  pupilOffsetX = map(mouseX, 0, width, -miniSphere.eyes.radius / 4, miniSphere.eyes.radius / 4);
+  pupilOffsetY = map(mouseY, 0, height, -miniSphere.eyes.radius / 4, miniSphere.eyes.radius / 4);
 
   // Left eye
   push();
-  translate(-r / 2, -r / 2, r + 2);
-  fill(255);
-  sphere(r / 4);
-  translate(pupilOffsetX, pupilOffsetY, r / 4);
-  fill(0);
-  sphere(r / 8);
+  translate(-miniSphere.eyes.radius / 2, -miniSphere.eyes.radius / 2, miniSphere.eyes.radius + 2);
+  fill(miniSphere.eyes.fills.pupil);
+  sphere(miniSphere.eyes.radius / 4);
+  translate(pupilOffsetX, pupilOffsetY, miniSphere.eyes.radius/ 4);
+  fill(miniSphere.eyes.fills.sclera);
+  sphere(miniSphere.eyes.radius / 8);
   pop();
 
   // Right eye
   push();
-  translate(r / 2, -r / 2, r + 2);
-  fill(255);
-  sphere(r / 4);
-  translate(pupilOffsetX, pupilOffsetY, r / 4);
-  fill(0);
-  sphere(r / 8);
+  translate(miniSphere.eyes.radius / 2, -miniSphere.eyes.radius / 2, miniSphere.eyes.radius + 2);
+  fill(miniSphere.eyes.fills.pupil);
+  sphere(miniSphere.eyes.radius / 4);
+  translate(pupilOffsetX, pupilOffsetY, miniSphere.eyes.radius / 4);
+  fill(miniSphere.eyes.fills.sclera);
+  sphere(miniSphere.eyes.radius / 8);
   pop();
 }
 
 // Draw the main eyes
-function drawEyes(x, y, z, radius) {
-  
+function drawEyes() {
+
+  // Rotate eyes based on frame count
   rotateWithFrameCount();
 
   // Left eye
   push();
-  translate(-60, -50, radius - 10);
-  fill(255);
-  sphere(25);
+  translate(-60, -50, bigSphere.eyes.radius - 10);
+  fill(bigSphere.eyes.fills.pupil);
+  sphere(bigSphere.eyes.sizes.pupil);
   translate(0, 0, 20);
-  fill(0);
-  sphere(10);
+  fill(bigSphere.eyes.fills.sclera);
+  sphere(bigSphere.eyes.sizes.sclera);
   pop();
 
   // Right eye
   push();
-  translate(60, -50, radius - 10);
-  fill(255);
-  sphere(25);
+  translate(60, -50, bigSphere.eyes.radius - 10);
+  fill(bigSphere.eyes.fills.pupil);
+  sphere(bigSphere.eyes.sizes.pupil);
   translate(0, 0, 20);
-  fill(0);
-  sphere(10);
+  fill(bigSphere.eyes.fills.sclera);
+  sphere(bigSphere.eyes.sizes.sclera);
   pop();
 }
 
