@@ -24,19 +24,16 @@ LUCAS MELDRUM
 
 ## Attribution
 
-This bit should attribute any code, assets or other elements used taken from other sources. For example:
+Elements used taken from examples in p5 documentation:
 
-> - This project uses [p5.js](https://p5js.org). Specifically, functions that I used:
--[scale](https://p5js.org/reference/p5/scale/)
--[normalMaterial](https://p5js.org/reference/p5/scale/)
--[orbitControl](https://p5js.org/reference/p5/scale/)
--[angleMode](https://p5js.org/reference/p5/scale/)
--[translate](https://p5js.org/reference/p5/scale/)
--[map](https://p5js.org/reference/p5/scale/)
--[rotateWithFrameCount](https://p5js.org/reference/p5/scale/)
+> - This project uses [p5.js](https://p5js.org). Specifically, functions that I used that were not learnt in class:
+-[scale](https://p5js.org/reference/p5/scale/): Used for pulsing affect 
+-[normalMaterial](https://p5js.org/reference/p5/normalMaterial/): Used to change material of the spheres
+-[orbitControl](https://p5js.org/reference/p5/orbitControl/): Used to be able to move around in 3D space
+-[angleMode](https://p5js.org/reference/p5/angleMode/): Used to change the unit system to degrees
+-[map](https://p5js.org/reference/p5/map/): Used to map the eyes to the mouse
+-[rotateWithFrameCount](https://p5js.org/examples/3d-geometries/) Taken example from the bottom of the page, rotates the eyes with frames
 
 ## License
-
-This bit should include the license you want to apply to your work. For example:
 
 > This project is licensed under a Creative Commons Attribution ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.en)) license with the exception of libraries and other components with their own licenses.
