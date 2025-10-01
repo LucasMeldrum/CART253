@@ -2,7 +2,7 @@
 
 LUCAS MELDRUM
 
-[View this project online](URL_FOR_THE_RUNNING_PROJECT)
+[View this project online](https://lucasmeldrum.github.io/CART253/topics/assignments/art-jam)
 
 ## Description
 
