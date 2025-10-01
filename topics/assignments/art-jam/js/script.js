@@ -2,7 +2,9 @@
  * Portrait
  * Lucas Meldrum
  * 
- * A description of a portrait
+ * An abstract portrait containing many faces and eyes that follow the mouse
+ * Click to change colors and in the 3D space for cool effects
+ * Symbolizes vibrant personality (IDK LOL) just looks cool...
  * 
  */
 
