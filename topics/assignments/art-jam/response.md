@@ -14,7 +14,7 @@ Overall, great job on the art-jam. When I first opened the work, I began smiling
 >https://mmmcarter.github.io/CART253-Fall-2025-/topics/art-jam/
 >https://github.com/MmmCarter/CART253-Fall-2025-/tree/main/topics/art-jam
 
-Wow! Opening this I had no idea what to expect and I was pleasantly surprised. The artwork really goes super saiyan! I love what happens when you hover over the eyes and then clicking at the same time. It really feels like the entire screen is shaking and that the portrait is "powering up".
+Wow! Opening this I had no idea what to expect and I was pleasantly surprised. The artwork really goes super saiyan! I love what happens when you hover over the eyes and then clicking at the same time. It really feels like the entire screen is shaking and that the portrait is "powering up". The facial features of the piece are also very well defined and using multiple different shapes to compose the entire portrait makes it seem as one entire object.
 
 Great job organizing your code as well! You created a function to draw each piece of the portrait and organized all your variables properly. One thing I noticed is you use a lot of hard coded numbers in your drawX() functions, which should be changed to facilitate future modifications and it keeps the code organized.
 
