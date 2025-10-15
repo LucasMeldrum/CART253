@@ -2,7 +2,7 @@
 
 ## Ashmitha Kanagiah - Smiling Lady
 >https://ashmyytaa.github.io/cart253/jams/art-jam/
-https://github.com/ashmyytaa/cart253/tree/main/jams/art-jam
+>https://github.com/ashmyytaa/cart253/tree/main/jams/art-jam
 
 I love the smiling lady portrait! Using mainly simple circles to create a wonderful portrait really shows how simple can make something more beautiful. I love the addition of the bubbles in the background and the interactive blush/hair changes to show that she is really just smiling through life. 
 
@@ -12,7 +12,7 @@ Overall, great job on the art-jam. When I first opened the work, I began smiling
 
 ## Haolei Ma - Super Saiyan
 >https://mmmcarter.github.io/CART253-Fall-2025-/topics/art-jam/
-https://github.com/MmmCarter/CART253-Fall-2025-/tree/main/topics/art-jam
+>https://github.com/MmmCarter/CART253-Fall-2025-/tree/main/topics/art-jam
 
 Wow! Opening this I had no idea what to expect and I was pleasantly surprised. The artwork really goes super saiyan! I love what happens when you hover over the eyes and then clicking at the same time. It really feels like the entire screen is shaking and that the portrait is "powering up".
 
@@ -22,7 +22,7 @@ Ultimately, I really like this piece and it definitely suprised me a lot when cl
 
 ## Joyce Angelina Lam - Self Portrait
 >https://ajoycel.github.io/cart253-2025/art-jam/
-https://github.com/AJoyceL/cart253-2025/tree/main/art-jam
+>https://github.com/AJoyceL/cart253-2025/tree/main/art-jam
 
 Starting off, the abstract work of this piece is amazing. I really love how the piece vizually looks and how the eye follows the cursor around whilst the colors/background changes. It really seems like such a nice portrait yet it is created with simple shapes which makes it even cooler. The eye closing and opening is also a great touch and it feels like a museum artwork where the eyes always somehow follow you
 
