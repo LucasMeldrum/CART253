@@ -24,7 +24,7 @@ Ultimately, I really like this piece and it definitely suprised me a lot when cl
 >https://ajoycel.github.io/cart253-2025/art-jam/
 >https://github.com/AJoyceL/cart253-2025/tree/main/art-jam
 
-Starting off, the abstract work of this piece is amazing. I really love how the piece vizually looks and how the eye follows the cursor around whilst the colors/background changes. It really seems like such a nice portrait yet it is created with simple shapes which makes it even cooler. The eye closing and opening is also a great touch and it feels like a museum artwork where the eyes always somehow follow you
+Starting off, the abstract work of this piece is amazing. I really love how the piece vizually looks and how the eye follows the cursor around whilst the colors/background changes. The body, hair work well with the angled edges of the shapes and create a visually stunning oiece. It really seems like such a nice portrait yet it is created with simple shapes which makes it even cooler. The eye closing and opening is also a great touch and it feels like a museum artwork where the eyes always somehow follow you
 
 I think the simplicity of the piece is the best part and even in your code it reflects that. There isn't a lot and it makes it so every shape and line has significance. One thing that could be organized a little better are the hard coded numbers, but other than that your functions, variables and conditionals are all done very well and organized correctly.
 
