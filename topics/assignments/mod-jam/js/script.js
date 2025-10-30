@@ -18,6 +18,9 @@
 // Track whether we're on the title, game or end
 let gameState = "title";
 
+// Track score default for now
+let score = 0;
+
 // Our frog
 const frog = {
   body: {
@@ -78,7 +81,7 @@ function draw() {
  * Title screen with a frog, fly, and "Play Now" button
  */
 function drawTitleScreen() {
-  background("#960000ff");
+  background("#8b8484ff");
 
   // Title text
   push();
@@ -244,6 +247,7 @@ function checkTongueFlyOverlap() {
   const d = dist(frog.tongue.x, frog.tongue.y, fly.x, fly.y);
   const eaten = d < frog.tongue.size / 2 + fly.size / 2;
   if (eaten) {
+    score ++;
     resetFly();
     frog.tongue.state = "inbound";
   }
