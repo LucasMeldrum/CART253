@@ -59,8 +59,7 @@ function draw() {
 
   if (gameState === "title") {
     drawTitleScreen();
-  } 
-  
+  }
   else if (gameState === "game") {
     background("#87ceeb");
     moveFly();
@@ -87,7 +86,7 @@ function drawTitleScreen() {
   pop();
 
   // Move the fly for animation
-  moveFly();
+  moveFly(true);
   drawFly();
 
   // Draw a frog (static, centered)
@@ -116,10 +115,21 @@ function drawTitleScreen() {
 /**
  * Moves the fly for both title and game modes
  */
-function moveFly() {
-  fly.x += fly.speed;
-  if (fly.x > width) {
-    resetFly();
+function moveFly(isTitleScreen) {
+  if (isTitleScreen) {
+    // Orbiting motion around the title
+    fly.angle += 0.03;
+    const titleX = width / 2;
+    const titleY = 120;
+    fly.x = titleX + cos(fly.angle) * fly.radius;
+    fly.y = titleY + sin(fly.angle) * fly.radius * 0.5;
+  } 
+  else {
+    // Normal linear movement in game
+    fly.x += fly.speed;
+    if (fly.x > width) {
+      resetFly();
+    }
   }
 }
 
