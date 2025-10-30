@@ -15,7 +15,7 @@
 
 "use strict";
 
-// Track whether we're on the title screen or playing
+// Track whether we're on the title, game or end
 let gameState = "title";
 
 // Our frog
@@ -69,10 +69,13 @@ function draw() {
     drawFrog();
     checkTongueFlyOverlap();
   }
+  else if (gameState === "end") {
+    drawEndScreen();  
+  }
 }
 
 /**
- * Draws the title screen with a frog, fly, and "Play Now" button
+ * Title screen with a frog, fly, and "Play Now" button
  */
 function drawTitleScreen() {
   background("#960000ff");
@@ -113,24 +116,55 @@ function drawTitleScreen() {
 }
 
 /**
+ * End title screen for end of the game with frog, fly, and end title
+ */
+function drawEndScreen() {
+  background("#000000ff");
+
+  // Title text
+  push();
+  textAlign(CENTER, CENTER);
+  fill("#004400");
+  textSize(64);
+  text("Frogfrogfrog", width / 2, 120);
+  pop();
+
+  // Move the fly for animation
+  moveFly(true);
+  drawFly();
+
+  // Draw a frog (static, centered)
+  push();
+  fill("#00ff00");
+  noStroke();
+  ellipse(width / 2, height - 100, 150);
+  pop();
+
+  // Draw play button
+  push();
+  rectMode(CENTER);
+  fill("#00aa00");
+  stroke("#004400");
+  strokeWeight(3);
+  rect(playButton.x, playButton.y, playButton.width, playButton.height, 20);
+
+  fill("#ffffff");
+  noStroke();
+  textSize(32);
+  textAlign(CENTER, CENTER);
+  text("Play Now", playButton.x, playButton.y);
+  pop();
+}
+
+/**
  * Moves the fly for both title and game modes
  */
-function moveFly(isTitleScreen) {
-  if (isTitleScreen) {
-    // Orbiting motion around the title
-    fly.angle += 0.03;
-    const titleX = width / 2;
-    const titleY = 120;
-    fly.x = titleX + cos(fly.angle) * fly.radius;
-    fly.y = titleY + sin(fly.angle) * fly.radius * 0.5;
-  } 
-  else {
+function moveFly() {
     // Normal linear movement in game
     fly.x += fly.speed;
     if (fly.x > width) {
       resetFly();
     }
-  }
 }
 
 /**
