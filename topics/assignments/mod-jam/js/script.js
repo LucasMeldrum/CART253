@@ -15,7 +15,7 @@
 
 "use strict";
 
-// Track whether we're on the title, game or end
+// Track whether we're on the title, game, boss or end
 let gameState = "title";
 
 // Track score default for now
@@ -42,7 +42,19 @@ const fly = {
   x: 0,
   y: 200,
   size: 10,
-  speed: 3
+  speed: 3,
+  active: true
+};
+
+// Our boss (used after the fly is eaten)
+const boss = {
+  x: 320,
+  y: 150,
+  size: 80,
+  speed: 5,
+  direction: 1,
+  health: 5,
+  active: false
 };
 
 // Button properties for title screen
@@ -65,12 +77,19 @@ function draw() {
   }
   else if (gameState === "game") {
     background("#87ceeb");
-    moveFly();
-    drawFly();
+    if (fly.active) {
+      moveFly();
+      drawFly();
+    }
     moveFrog();
     moveTongue();
     drawFrog();
-    checkTongueFlyOverlap();
+    if (fly.active) {
+      checkTongueFlyOverlap();
+    }
+  }
+  else if (gameState === "boss") {
+    drawBossStage();
   }
   else if (gameState === "end") {
     drawEndScreen();  
@@ -119,6 +138,29 @@ function drawTitleScreen() {
 }
 
 /**
+ * Boss fight stage after the fly is eaten
+ */
+function drawBossStage() {
+  background("#222222");
+
+  moveBoss();
+  drawBoss();
+
+  moveFrog();
+  moveTongue();
+  drawFrog();
+  checkTongueBossOverlap();
+
+  // Display boss health
+  push();
+  fill("#ffffff");
+  textSize(20);
+  textAlign(LEFT, TOP);
+  text("Boss HP: " + boss.health, 20, 20);
+  pop();
+}
+
+/**
  * End title screen for end of the game with frog, fly, and end title
  */
 function drawEndScreen() {
@@ -155,7 +197,15 @@ function drawEndScreen() {
   noStroke();
   textSize(32);
   textAlign(CENTER, CENTER);
-  text("Play Now", playButton.x, playButton.y);
+  text("Play Again", playButton.x, playButton.y);
+  pop();
+
+  // Display final score
+  push();
+  fill("#ffffff");
+  textSize(24);
+  textAlign(CENTER);
+  text("Final Score: " + score, width / 2, 320);
   pop();
 }
 
@@ -163,17 +213,18 @@ function drawEndScreen() {
  * Moves the fly for both title and game modes
  */
 function moveFly() {
-    // Normal linear movement in game
-    fly.x += fly.speed;
-    if (fly.x > width) {
-      resetFly();
-    }
+  fly.x += fly.speed;
+  if (fly.x > width) {
+    resetFly();
+  }
 }
 
 /**
  * Draws the fly as a black circle
  */
 function drawFly() {
+  if (!fly.active) return;
+
   push();
   noStroke();
   fill("#000000");
@@ -207,7 +258,8 @@ function moveTongue() {
     if (frog.tongue.y <= 0) {
       frog.tongue.state = "inbound";
     }
-  } else if (frog.tongue.state === "inbound") {
+  }
+  else if (frog.tongue.state === "inbound") {
     frog.tongue.y += frog.tongue.speed;
     if (frog.tongue.y >= height) {
       frog.tongue.state = "idle";
@@ -246,10 +298,65 @@ function drawFrog() {
 function checkTongueFlyOverlap() {
   const d = dist(frog.tongue.x, frog.tongue.y, fly.x, fly.y);
   const eaten = d < frog.tongue.size / 2 + fly.size / 2;
+
   if (eaten) {
-    score ++;
-    resetFly();
+    score++;
+    fly.active = false;
     frog.tongue.state = "inbound";
+    startBossFight();
+  }
+}
+
+/**
+ * Starts the boss fight stage
+ */
+function startBossFight() {
+  gameState = "boss";
+  boss.active = true;
+  boss.health = 5;
+  boss.x = width / 2;
+  boss.direction = 1;
+}
+
+/**
+ * Moves the boss side-to-side
+ */
+function moveBoss() {
+  boss.x += boss.speed * boss.direction;
+
+  if (boss.x < 0 || boss.x > width) {
+    boss.direction *= -1;
+  }
+}
+
+/**
+ * Draws the boss as a large red circle
+ */
+function drawBoss() {
+  if (!boss.active) return;
+
+  push();
+  noStroke();
+  fill("#880000");
+  ellipse(boss.x, boss.y, boss.size);
+  pop();
+}
+
+/**
+ * Checks for tongue-boss overlap
+ */
+function checkTongueBossOverlap() {
+  const d = dist(frog.tongue.x, frog.tongue.y, boss.x, boss.y);
+  const hit = d < frog.tongue.size / 2 + boss.size / 2;
+
+  if (hit && frog.tongue.state === "outbound") {
+    boss.health--;
+    frog.tongue.state = "inbound";
+
+    if (boss.health <= 0) {
+      boss.active = false;
+      gameState = "end";
+    }
   }
 }
 
@@ -266,11 +373,22 @@ function mousePressed() {
       mouseY < playButton.y + playButton.height / 2
     ) {
       gameState = "game";
+      fly.active = true;
+      resetFly();
       return;
     }
-  } else if (gameState === "game") {
+  }
+  else if (gameState === "game" || gameState === "boss") {
     if (frog.tongue.state === "idle") {
       frog.tongue.state = "outbound";
     }
+  }
+  else if (gameState === "end") {
+    // Restart the game from title screen
+    gameState = "title";
+    fly.active = true;
+    boss.active = false;
+    score = 0;
+    resetFly();
   }
 }
