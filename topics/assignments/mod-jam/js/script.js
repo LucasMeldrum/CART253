@@ -350,21 +350,44 @@ function startBossFight() {
 }
 
 /**
- * Draws boss
+ * Draws the boss as a large fly that gets angrier each phase
  */
 function drawBoss() {
   if (!boss.active) return;
 
   push();
+  translate(boss.x, boss.y);
   noStroke();
 
-  if (boss.phase === 1) fill("#4d0101ff");
-  else if (boss.phase === 2) fill("#810303ff");
-  else fill("#ff0000ff");
+  // Phase-based body color (gets angrier)
+  let bodyColor;
+  if (boss.phase === 1) {
+    bodyColor = "#444444"; // calm
+  } else if (boss.phase === 2) {
+    bodyColor = "#662222"; // angry
+  } else {
+    bodyColor = "#aa0000"; // furious
+  }
 
-  ellipse(boss.x, boss.y, boss.size);
+  // Draw wings (semi-transparent white)
+  fill(255, 255, 255, 150);
+  ellipse(-boss.size * 0.6, -boss.size * 0.3, boss.size * 0.8, boss.size * 0.5);
+  ellipse(boss.size * 0.6, -boss.size * 0.3, boss.size * 0.8, boss.size * 0.5);
+
+  // Body
+  fill(bodyColor);
+  ellipse(0, 0, boss.size * 1.2, boss.size); // main body
+
+  // Eyes (get redder as phase increases)
+  if (boss.phase === 1) fill("#222222");
+  else if (boss.phase === 2) fill("#880000");
+  else fill("#ff0000");
+  ellipse(-boss.size * 0.3, -boss.size * 0.1, boss.size * 0.3);
+  ellipse(boss.size * 0.3, -boss.size * 0.1, boss.size * 0.3);
+
   pop();
 }
+
 
 /**
  * Moves boss side-to-side
