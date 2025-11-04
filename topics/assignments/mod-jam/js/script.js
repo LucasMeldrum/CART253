@@ -166,67 +166,6 @@ function drawGameStage() {
   }
 }
 
-/**
- * Boss fight stage with 3 phases
- */
-function drawBossStage() {
-  background("#222222");
-
-  moveFrog();
-  moveTongue();
-  drawFrog();
-  moveBoss();
-  drawBoss();
-  handleBossPhases();
-  drawProjectiles();
-  moveProjectiles();
-  drawSummonedFlies();
-  moveSummonedFlies();
-  checkTongueBossOverlap();
-  checkProjectileFrogCollision();
-  checkFlyFrogCollision();
-  checkTongueSummonedFlyOverlap();
-  drawBossStageStats();
-
-  // End if player dies
-  if (playerHealth <= 0) {
-    gameState = "endLose";
-    boss.active = false;
-  }
-}
-
-/**
- * Handles boss behavior based on remaining health
- */
-function handleBossPhases() {
-
-  if (boss.health <= 20 && boss.health > 10) {
-    boss.phase = 2;
-  }
-  else if (boss.health <= 10) {
-    boss.phase = 3;
-  }
-  else {
-    boss.phase = 1;
-  }
-
-  // Phase 2: shoots projectiles downward
-  if (boss.phase === 2) {
-    boss.shootCooldown--;
-    if (boss.shootCooldown <= 0) {
-      shootProjectile();
-      boss.shootCooldown = 60;
-    }
-  }
-  // Phase 3: summons flies periodically
-  else if (boss.phase === 3) {
-    boss.shootCooldown--;
-    if (boss.shootCooldown <= 0) {
-      summonFly();
-      boss.shootCooldown = 90;
-    }
-  }
-}
 
 /**
  * Moves the fly
@@ -327,6 +266,77 @@ function checkTongueFlyOverlap() {
 }
 
 /**
+ * Boss fight stage with 3 phases
+ */
+function drawBossStage() {
+  background("#222222");
+
+  // Frog and tongue functions
+  moveFrog();
+  moveTongue();
+  drawFrog();
+
+  // Boss and phases functions
+  moveBoss();
+  drawBoss();
+  handleBossPhases();
+
+  // Projectiles and summoned flies (phase 2 and 3)
+  drawProjectiles();
+  moveProjectiles();
+  drawSummonedFlies();
+  moveSummonedFlies();
+
+  // Tongue overlap with boss and flies and collisions with frog functions
+  checkTongueBossOverlap();
+  checkProjectileFrogCollision();
+  checkFlyFrogCollision();
+  checkTongueSummonedFlyOverlap();
+
+  // Boss stats function
+  drawBossStageStats();
+
+  // End if player dies at any point
+  if (playerHealth <= 0) {
+    gameState = "endLose";
+    boss.active = false;
+  }
+}
+
+/**
+ * Handles boss behavior based on phases (1,2,3)
+ */
+function handleBossPhases() {
+  // Boss phases: 1st phase until 20 health, 2nd phase when boss is at <20 health, and 3rd phase until boss is dead
+  if (boss.health <= 20 && boss.health > 10) {
+    boss.phase = 2;
+  }
+  else if (boss.health <= 10) {
+    boss.phase = 3;
+  }
+  else {
+    boss.phase = 1;
+  }
+
+  // Phase 2: shoots projectiles downward
+  if (boss.phase === 2) {
+    boss.shootCooldown--;
+    if (boss.shootCooldown <= 0) {
+      shootProjectile();
+      boss.shootCooldown = 60;
+    }
+  }
+  // Phase 3: summons flies periodically that can be shot
+  else if (boss.phase === 3) {
+    boss.shootCooldown--;
+    if (boss.shootCooldown <= 0) {
+      summonFly();
+      boss.shootCooldown = 100;
+    }
+  }
+}
+
+/**
  * Starts boss fight
  */
 function startBossFight() {
@@ -337,16 +347,6 @@ function startBossFight() {
   playerHealth = 3;
   projectiles.length = 0;
   summonedFlies.length = 0;
-}
-
-/**
- * Moves boss side-to-side
- */
-function moveBoss() {
-  boss.x += boss.speed * boss.direction;
-  if (boss.x < 0 || boss.x > width) {
-    boss.direction *= -1;
-  }
 }
 
 /**
@@ -364,6 +364,16 @@ function drawBoss() {
 
   ellipse(boss.x, boss.y, boss.size);
   pop();
+}
+
+/**
+ * Moves boss side-to-side
+ */
+function moveBoss() {
+  boss.x += boss.speed * boss.direction;
+  if (boss.x < 0 || boss.x > width) {
+    boss.direction *= -1;
+  }
 }
 
 /**
@@ -552,7 +562,7 @@ function mousePressed() {
       frog.tongue.state = "outbound";
     }
   }
-  else if (gameState === "end") {
+  else if (gameState === "endLose" || gameState === "endWin") {
     // Restart
     gameState = "title";
     fly.active = true;
