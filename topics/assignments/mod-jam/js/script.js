@@ -21,6 +21,9 @@ let gameState = "title";
 // Track score default for now
 let score = 0;
 
+// Player health (used in boss phases)
+let playerHealth = 5;
+
 // Our frog
 const frog = {
   body: {
@@ -46,23 +49,33 @@ const fly = {
   active: true
 };
 
-// Our boss (used after the fly is eaten)
+// Boss properties
 const boss = {
   x: 320,
   y: 150,
   size: 80,
   speed: 5,
   direction: 1,
-  health: 5,
-  active: false
+  health: 30,
+  active: false,
+  phase: 1,
+  shootCooldown: 0
 };
+
+// Projectiles shot by boss
+const projectiles = [];
+
+// Flies summoned by boss (reusing same stats as fly)
+const summonedFlies = [];
 
 // Button properties for title screen
 const playButton = {
   x: 320,
   y: 380,
   width: 200,
-  height: 60
+  height: 60,
+  round: 20,
+  text: "Play now",
 };
 
 function setup() {
@@ -76,17 +89,7 @@ function draw() {
     drawTitleScreen();
   }
   else if (gameState === "game") {
-    background("#87ceeb");
-    if (fly.active) {
-      moveFly();
-      drawFly();
-    }
-    moveFrog();
-    moveTongue();
-    drawFrog();
-    if (fly.active) {
-      checkTongueFlyOverlap();
-    }
+    drawGameStage();
   }
   else if (gameState === "boss") {
     drawBossStage();
@@ -111,7 +114,7 @@ function drawTitleScreen() {
   pop();
 
   // Move the fly for animation
-  moveFly(true);
+  moveFly();
   drawFly();
 
   // Draw a frog (static, centered)
@@ -127,41 +130,67 @@ function drawTitleScreen() {
   fill("#00aa00");
   stroke("#004400");
   strokeWeight(3);
-  rect(playButton.x, playButton.y, playButton.width, playButton.height, 20);
+  rect(playButton.x, playButton.y, playButton.width, playButton.height, playButton.round);
 
   fill("#ffffff");
   noStroke();
   textSize(32);
   textAlign(CENTER, CENTER);
-  text("Play Now", playButton.x, playButton.y);
+  text(playButton.text, playButton.x, playButton.y);
   pop();
 }
 
 /**
- * Boss fight stage after the fly is eaten
+ * Main game stage before boss
  */
-function drawBossStage() {
-  background("#222222");
+function drawGameStage() {
+  background("#87ceeb");
 
-  moveBoss();
-  drawBoss();
+  if (fly.active) {
+    moveFly();
+    drawFly();
+  }
 
   moveFrog();
   moveTongue();
   drawFrog();
-  checkTongueBossOverlap();
 
-  // Display boss health
-  push();
-  fill("#ffffff");
-  textSize(20);
-  textAlign(LEFT, TOP);
-  text("Boss HP: " + boss.health, 20, 20);
-  pop();
+  if (fly.active) {
+    checkTongueFlyOverlap();
+  }
 }
 
 /**
- * End title screen for end of the game with frog, fly, and end title
+ * Boss fight stage with 3 phases
+ */
+function drawBossStage() {
+  background("#222222");
+
+  moveFrog();
+  moveTongue();
+  drawFrog();
+  moveBoss();
+  drawBoss();
+  handleBossPhases();
+  drawProjectiles();
+  moveProjectiles();
+  drawSummonedFlies();
+  moveSummonedFlies();
+  checkTongueBossOverlap();
+  checkProjectileFrogCollision();
+  checkFlyFrogCollision();
+  checkTongueSummonedFlyOverlap();
+  drawBossStageStats();
+
+  // End if player dies
+  if (playerHealth <= 0) {
+    gameState = "end";
+    boss.active = false;
+  }
+}
+
+/**
+ * End title screen
  */
 function drawEndScreen() {
   background("#000000ff");
@@ -174,30 +203,29 @@ function drawEndScreen() {
   text("Frogfrogfrog", width / 2, 120);
   pop();
 
-  // Move the fly for animation
-  moveFly(true);
+  // Draw frog and fly
+  moveFly();
   drawFly();
 
-  // Draw a frog (static, centered)
   push();
   fill("#00ff00");
   noStroke();
   ellipse(width / 2, height - 100, 150);
   pop();
 
-  // Draw play button
+  // Draw restart button
   push();
   rectMode(CENTER);
   fill("#00aa00");
   stroke("#004400");
   strokeWeight(3);
-  rect(playButton.x, playButton.y, playButton.width, playButton.height, 20);
+  rect(playButton.x, playButton.y, playButton.width, playButton.height, playButton.round);
 
   fill("#ffffff");
   noStroke();
   textSize(32);
   textAlign(CENTER, CENTER);
-  text("Play Again", playButton.x, playButton.y);
+  text("Play again", playButton.x, playButton.y);
   pop();
 
   // Display final score
@@ -210,7 +238,40 @@ function drawEndScreen() {
 }
 
 /**
- * Moves the fly for both title and game modes
+ * Handles boss behavior based on remaining health
+ */
+function handleBossPhases() {
+
+  if (boss.health <= 20 && boss.health > 10) {
+    boss.phase = 2;
+  }
+  else if (boss.health <= 10) {
+    boss.phase = 3;
+  }
+  else {
+    boss.phase = 1;
+  }
+
+  // Phase 2: shoots projectiles downward
+  if (boss.phase === 2) {
+    boss.shootCooldown--;
+    if (boss.shootCooldown <= 0) {
+      shootProjectile();
+      boss.shootCooldown = 60;
+    }
+  }
+  // Phase 3: summons flies periodically
+  else if (boss.phase === 3) {
+    boss.shootCooldown--;
+    if (boss.shootCooldown <= 0) {
+      summonFly();
+      boss.shootCooldown = 90;
+    }
+  }
+}
+
+/**
+ * Moves the fly
  */
 function moveFly() {
   fly.x += fly.speed;
@@ -220,7 +281,7 @@ function moveFly() {
 }
 
 /**
- * Draws the fly as a black circle
+ * Draws the fly
  */
 function drawFly() {
   if (!fly.active) return;
@@ -233,7 +294,7 @@ function drawFly() {
 }
 
 /**
- * Resets the fly to a random vertical position
+ * Resets fly position
  */
 function resetFly() {
   fly.x = 0;
@@ -241,14 +302,14 @@ function resetFly() {
 }
 
 /**
- * Moves the frog to the mouse position on x
+ * Moves frog horizontally with mouse
  */
 function moveFrog() {
   frog.body.x = mouseX;
 }
 
 /**
- * Handles moving the tongue based on its state
+ * Handles tongue movement
  */
 function moveTongue() {
   frog.tongue.x = frog.body.x;
@@ -268,7 +329,7 @@ function moveTongue() {
 }
 
 /**
- * Draws the frog (body and tongue)
+ * Draws frog and tongue
  */
 function drawFrog() {
   // Tongue
@@ -293,7 +354,7 @@ function drawFrog() {
 }
 
 /**
- * Checks for tongue-fly overlap
+ * Tongue-Fly overlap check
  */
 function checkTongueFlyOverlap() {
   const d = dist(frog.tongue.x, frog.tongue.y, fly.x, fly.y);
@@ -308,42 +369,180 @@ function checkTongueFlyOverlap() {
 }
 
 /**
- * Starts the boss fight stage
+ * Starts boss fight
  */
 function startBossFight() {
   gameState = "boss";
   boss.active = true;
-  boss.health = 5;
-  boss.x = width / 2;
-  boss.direction = 1;
+  boss.health = 30;
+  boss.phase = 1;
+  playerHealth = 3;
+  projectiles.length = 0;
+  summonedFlies.length = 0;
 }
 
 /**
- * Moves the boss side-to-side
+ * Moves boss side-to-side
  */
 function moveBoss() {
   boss.x += boss.speed * boss.direction;
-
   if (boss.x < 0 || boss.x > width) {
     boss.direction *= -1;
   }
 }
 
 /**
- * Draws the boss as a large red circle
+ * Draws boss
  */
 function drawBoss() {
   if (!boss.active) return;
 
   push();
   noStroke();
-  fill("#880000");
+
+  if (boss.phase === 1) fill("#880000");
+  else if (boss.phase === 2) fill("#aa0000");
+  else fill("#ff0000");
+
   ellipse(boss.x, boss.y, boss.size);
   pop();
 }
 
 /**
- * Checks for tongue-boss overlap
+ * Shoots a projectile downward
+ */
+function shootProjectile() {
+  const p = {
+    x: boss.x,
+    y: boss.y + boss.size / 2,
+    size: 15,
+    speed: 7
+  };
+  projectiles.push(p);
+}
+
+/**
+ * Moves projectiles
+ */
+function moveProjectiles() {
+  for (let i = projectiles.length - 1; i >= 0; i--) {
+    projectiles[i].y += projectiles[i].speed;
+    if (projectiles[i].y > height) {
+      projectiles.splice(i, 1);
+    }
+  }
+}
+
+/**
+ * Draws projectiles
+ */
+function drawProjectiles() {
+  push();
+  fill("#ff8800");
+  noStroke();
+  for (const p of projectiles) {
+    ellipse(p.x, p.y, p.size);
+  }
+  pop();
+}
+
+/**
+ * Checks projectile-frog collisions
+ */
+function checkProjectileFrogCollision() {
+  for (let i = projectiles.length - 1; i >= 0; i--) {
+    const p = projectiles[i];
+    const d = dist(p.x, p.y, frog.body.x, frog.body.y);
+    if (d < p.size / 2 + frog.body.size / 2) {
+      projectiles.splice(i, 1);
+      playerHealth--;
+    }
+  }
+}
+
+/**
+ * Summons a fly that moves toward frog (reusing fly size/speed but slower)
+ */
+function summonFly() {
+  const s = {
+    x: random(0, width),
+    y: boss.y + boss.size / 2,
+    size: fly.size,
+    speed: fly.speed * 0.75,
+    active: true
+  };
+  summonedFlies.push(s);
+}
+
+/**
+ * Moves summoned flies
+ */
+function moveSummonedFlies() {
+  for (let i = summonedFlies.length - 1; i >= 0; i--) {
+    const f = summonedFlies[i];
+    if (!f.active) continue;
+
+    const dx = frog.body.x - f.x;
+    const dy = frog.body.y - f.y;
+    const distToFrog = dist(f.x, f.y, frog.body.x, frog.body.y);
+
+    f.x += (dx / distToFrog) * f.speed;
+    f.y += (dy / distToFrog) * f.speed;
+
+    if (f.y > height) {
+      summonedFlies.splice(i, 1);
+    }
+  }
+}
+
+/**
+ * Draws summoned flies
+ */
+function drawSummonedFlies() {
+  push();
+  fill("#000000");
+  noStroke();
+  for (const f of summonedFlies) {
+    if (f.active) {
+      ellipse(f.x, f.y, f.size);
+    }
+  }
+  pop();
+}
+
+/**
+ * Checks summoned fly collisions with frog
+ */
+function checkFlyFrogCollision() {
+  for (let i = summonedFlies.length - 1; i >= 0; i--) {
+    const f = summonedFlies[i];
+    const d = dist(f.x, f.y, frog.body.x, frog.body.y);
+    if (d < f.size / 2 + frog.body.size / 2) {
+      summonedFlies.splice(i, 1);
+      playerHealth--;
+    }
+  }
+}
+
+/**
+ * Tongue-Summoned Fly overlap check (can eat them)
+ */
+function checkTongueSummonedFlyOverlap() {
+  for (let i = summonedFlies.length - 1; i >= 0; i--) {
+    const f = summonedFlies[i];
+    const d = dist(frog.tongue.x, frog.tongue.y, f.x, f.y);
+    const eaten = d < frog.tongue.size / 2 + f.size / 2;
+
+    if (eaten && frog.tongue.state === "outbound") {
+      score++;
+      summonedFlies.splice(i, 1);
+      frog.tongue.state = "inbound";
+    }
+  }
+}
+
+/**
+ * Tongue-Boss overlap
  */
 function checkTongueBossOverlap() {
   const d = dist(frog.tongue.x, frog.tongue.y, boss.x, boss.y);
@@ -360,12 +559,24 @@ function checkTongueBossOverlap() {
   }
 }
 
+ // Display boss health and player health
+  function drawBossStageStats() {
+    push();
+    fill("#ffffff");
+    textSize(20);
+    textAlign(LEFT, TOP);
+    text("Boss HP: " + boss.health, 20, 20);
+    text("Frog HP: " + playerHealth, 20, 45);
+    text("Phase: " + boss.phase, 20, 70);
+    pop();
+  }
+
 /**
  * Mouse click handler
  */
 function mousePressed() {
   if (gameState === "title") {
-    // Check if the user clicked the Play button
+    // Play button
     if (
       mouseX > playButton.x - playButton.width / 2 &&
       mouseX < playButton.x + playButton.width / 2 &&
@@ -384,11 +595,12 @@ function mousePressed() {
     }
   }
   else if (gameState === "end") {
-    // Restart the game from title screen
+    // Restart
     gameState = "title";
     fly.active = true;
     boss.active = false;
     score = 0;
+    playerHealth = 3;
     resetFly();
   }
 }
