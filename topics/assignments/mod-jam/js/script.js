@@ -269,7 +269,7 @@ function checkTongueFlyOverlap() {
  * Boss fight stage with 3 phases
  */
 function drawBossStage() {
-  background("#222222");
+  background("#a8a8a8ff");
 
   // Frog and tongue functions
   moveFrog();
@@ -358,9 +358,9 @@ function drawBoss() {
   push();
   noStroke();
 
-  if (boss.phase === 1) fill("#880000");
-  else if (boss.phase === 2) fill("#aa0000");
-  else fill("#ff0000");
+  if (boss.phase === 1) fill("#4d0101ff");
+  else if (boss.phase === 2) fill("#810303ff");
+  else fill("#ff0000ff");
 
   ellipse(boss.x, boss.y, boss.size);
   pop();
@@ -517,12 +517,13 @@ function checkTongueBossOverlap() {
   const hit = d < frog.tongue.size / 2 + boss.size / 2;
 
   if (hit && frog.tongue.state === "outbound") {
+    score++;
     boss.health--;
     frog.tongue.state = "inbound";
 
     if (boss.health <= 0) {
       boss.active = false;
-      gameState = "end";
+      gameState = "endWin";
     }
   }
 }
