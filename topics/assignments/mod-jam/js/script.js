@@ -78,13 +78,14 @@ const playButton = {
   text: "Play now",
 };
 
+// Setup function
 function setup() {
   createCanvas(640, 480);
   resetFly();
 }
 
+// Draw function
 function draw() {
-
   if (gameState === "title") {
     drawTitleScreen();
   }
@@ -94,8 +95,11 @@ function draw() {
   else if (gameState === "boss") {
     drawBossStage();
   }
-  else if (gameState === "end") {
-    drawEndScreen();  
+  else if (gameState === "endLose") {
+    drawEndLoseScreen();  
+  }
+  else if (gameState === "endWin") {
+    drawEndWinScreen();  
   }
 }
 
@@ -131,7 +135,6 @@ function drawTitleScreen() {
   stroke("#004400");
   strokeWeight(3);
   rect(playButton.x, playButton.y, playButton.width, playButton.height, playButton.round);
-
   fill("#ffffff");
   noStroke();
   textSize(32);
@@ -141,20 +144,23 @@ function drawTitleScreen() {
 }
 
 /**
- * Main game stage before boss
+ * Main game stage before boss, fly moving left and right
  */
 function drawGameStage() {
   background("#87ceeb");
 
+  // Normal fly movement
   if (fly.active) {
     moveFly();
     drawFly();
   }
 
+  // Frog and tongue
   moveFrog();
   moveTongue();
   drawFrog();
 
+  // Checking for fly being eaten
   if (fly.active) {
     checkTongueFlyOverlap();
   }
@@ -184,57 +190,9 @@ function drawBossStage() {
 
   // End if player dies
   if (playerHealth <= 0) {
-    gameState = "end";
+    gameState = "endLose";
     boss.active = false;
   }
-}
-
-/**
- * End title screen
- */
-function drawEndScreen() {
-  background("#000000ff");
-
-  // Title text
-  push();
-  textAlign(CENTER, CENTER);
-  fill("#004400");
-  textSize(64);
-  text("Frogfrogfrog", width / 2, 120);
-  pop();
-
-  // Draw frog and fly
-  moveFly();
-  drawFly();
-
-  push();
-  fill("#00ff00");
-  noStroke();
-  ellipse(width / 2, height - 100, 150);
-  pop();
-
-  // Draw restart button
-  push();
-  rectMode(CENTER);
-  fill("#00aa00");
-  stroke("#004400");
-  strokeWeight(3);
-  rect(playButton.x, playButton.y, playButton.width, playButton.height, playButton.round);
-
-  fill("#ffffff");
-  noStroke();
-  textSize(32);
-  textAlign(CENTER, CENTER);
-  text("Play again", playButton.x, playButton.y);
-  pop();
-
-  // Display final score
-  push();
-  fill("#ffffff");
-  textSize(24);
-  textAlign(CENTER);
-  text("Final Score: " + score, width / 2, 320);
-  pop();
 }
 
 /**
@@ -603,4 +561,97 @@ function mousePressed() {
     playerHealth = 3;
     resetFly();
   }
+}
+
+/**
+ * End title screen
+ */
+function drawEndLoseScreen() {
+  background("#000000ff");
+
+  // Title text
+  push();
+  textAlign(CENTER, CENTER);
+  fill("#004400");
+  textSize(64);
+  text("You Lose!", width / 2, 120);
+  pop();
+
+  // Draw frog and fly
+  moveFly();
+  drawFly();
+
+  push();
+  fill("#00ff00");
+  noStroke();
+  ellipse(width / 2, height - 100, 150);
+  pop();
+
+  // Draw restart button
+  push();
+  rectMode(CENTER);
+  fill("#00aa00");
+  stroke("#004400");
+  strokeWeight(3);
+  rect(playButton.x, playButton.y, playButton.width, playButton.height, playButton.round);
+
+  fill("#ffffff");
+  noStroke();
+  textSize(32);
+  textAlign(CENTER, CENTER);
+  text("Play again", playButton.x, playButton.y);
+  pop();
+
+  // Display final score
+  push();
+  fill("#ffffff");
+  textSize(24);
+  textAlign(CENTER);
+  text("Final Score: " + score, width / 2, 320);
+  pop();
+}
+
+function drawEndWinScreen() {
+  background("#000000ff");
+
+  // Title text
+  push();
+  textAlign(CENTER, CENTER);
+  fill("#004400");
+  textSize(64);
+  text("You Win!", width / 2, 120);
+  pop();
+
+  // Draw frog and fly
+  moveFly();
+  drawFly();
+
+  push();
+  fill("#00ff00");
+  noStroke();
+  ellipse(width / 2, height - 100, 150);
+  pop();
+
+  // Draw restart button
+  push();
+  rectMode(CENTER);
+  fill("#00aa00");
+  stroke("#004400");
+  strokeWeight(3);
+  rect(playButton.x, playButton.y, playButton.width, playButton.height, playButton.round);
+
+  fill("#ffffff");
+  noStroke();
+  textSize(32);
+  textAlign(CENTER, CENTER);
+  text("Play again", playButton.x, playButton.y);
+  pop();
+
+  // Display final score
+  push();
+  fill("#ffffff");
+  textSize(24);
+  textAlign(CENTER);
+  text("Final Score: " + score, width / 2, 320);
+  pop();
 }
