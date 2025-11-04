@@ -114,19 +114,14 @@ function drawTitleScreen() {
   textAlign(CENTER, CENTER);
   fill("#004400");
   textSize(64);
-  text("Frogfrogfrog", width / 2, 120);
+  text("FrogFrogFrog", width / 2, 120);
   pop();
 
   // Move the fly for animation
   moveFly();
   drawFly();
 
-  // Draw a frog (static, centered)
-  push();
-  fill("#00ff00");
-  noStroke();
-  ellipse(width / 2, height - 100, 150);
-  pop();
+  drawFrog();
 
   // Draw play button
   push();
@@ -226,27 +221,49 @@ function moveTongue() {
 }
 
 /**
- * Draws frog and tongue
+ * Draws the frog with a body, tongue, eyes, and legs
  */
 function drawFrog() {
-  // Tongue
-  push();
-  fill("#ff0000");
-  noStroke();
-  ellipse(frog.tongue.x, frog.tongue.y, frog.tongue.size);
-  pop();
-
+  // Draw tongue (behind head)
   push();
   stroke("#ff0000");
   strokeWeight(frog.tongue.size);
-  line(frog.tongue.x, frog.tongue.y, frog.body.x, frog.body.y);
+  line(frog.tongue.x, frog.tongue.y, frog.body.x, frog.body.y - frog.body.size * 0.3);
+  noStroke();
+  fill("#ff5555");
+  ellipse(frog.tongue.x, frog.tongue.y, frog.tongue.size * 1.2);
   pop();
 
-  // Body
+  // Draw legs
   push();
-  fill("#00ff00");
+  fill("#008000");
   noStroke();
+  ellipse(frog.body.x - frog.body.size * 0.4, frog.body.y + frog.body.size * 0.4, frog.body.size * 0.5, frog.body.size * 0.3);
+  ellipse(frog.body.x + frog.body.size * 0.4, frog.body.y + frog.body.size * 0.4, frog.body.size * 0.5, frog.body.size * 0.3);
+  pop();
+
+  // Body (main green circle with shading)
+  push();
+  noStroke();
+  fill("#00cc00");
   ellipse(frog.body.x, frog.body.y, frog.body.size);
+  fill(0, 100);
+  ellipse(frog.body.x, frog.body.y + frog.body.size * 0.1, frog.body.size);
+  pop();
+
+  // Eyes
+  push();
+  fill("#99ff99");
+  stroke("#006600");
+  strokeWeight(2);
+  ellipse(frog.body.x - frog.body.size * 0.25, frog.body.y - frog.body.size * 0.4, frog.body.size * 0.25);
+  ellipse(frog.body.x + frog.body.size * 0.25, frog.body.y - frog.body.size * 0.4, frog.body.size * 0.25);
+
+  // Pupils
+  fill("#000000");
+  noStroke();
+  ellipse(frog.body.x - frog.body.size * 0.25, frog.body.y - frog.body.size * 0.4, frog.body.size * 0.1);
+  ellipse(frog.body.x + frog.body.size * 0.25, frog.body.y - frog.body.size * 0.4, frog.body.size * 0.1);
   pop();
 }
 
@@ -362,11 +379,11 @@ function drawBoss() {
   // Phase-based body color (gets angrier)
   let bodyColor;
   if (boss.phase === 1) {
-    bodyColor = "#444444"; // calm
+    bodyColor = "#444444"; 
   } else if (boss.phase === 2) {
-    bodyColor = "#662222"; // angry
+    bodyColor = "#662222";
   } else {
-    bodyColor = "#aa0000"; // furious
+    bodyColor = "#aa0000"; 
   }
 
   // Draw wings (semi-transparent white)
@@ -379,15 +396,21 @@ function drawBoss() {
   ellipse(0, 0, boss.size * 1.2, boss.size); // main body
 
   // Eyes (get redder as phase increases)
-  if (boss.phase === 1) fill("#222222");
-  else if (boss.phase === 2) fill("#880000");
-  else fill("#ff0000");
+  if (boss.phase === 1) {
+    fill("#222222");
+  }
+  else if (boss.phase === 2) {
+    fill("#880000");
+  }
+  else {
+    fill("#ff0000");
+  }
+
   ellipse(-boss.size * 0.3, -boss.size * 0.1, boss.size * 0.3);
   ellipse(boss.size * 0.3, -boss.size * 0.1, boss.size * 0.3);
 
   pop();
 }
-
 
 /**
  * Moves boss side-to-side
