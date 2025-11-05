@@ -637,35 +637,13 @@ function drawEndLoseScreen() {
   // Draw frog and fly
   moveFly();
   drawFly();
-
-  push();
-  fill("#00ff00");
-  noStroke();
-  ellipse(width / 2, height - 100, 150);
-  pop();
+  drawFrog();
 
   // Draw restart button
-  push();
-  rectMode(CENTER);
-  fill("#00aa00");
-  stroke("#004400");
-  strokeWeight(3);
-  rect(playButton.x, playButton.y, playButton.width, playButton.height, playButton.round);
-
-  fill("#ffffff");
-  noStroke();
-  textSize(32);
-  textAlign(CENTER, CENTER);
-  text("Play again", playButton.x, playButton.y);
-  pop();
+  drawRestartButton();
 
   // Display final score
-  push();
-  fill("#ffffff");
-  textSize(24);
-  textAlign(CENTER);
-  text("Final Score: " + score, width / 2, 320);
-  pop();
+  displayFinalScore();
 }
 
 function drawEndWinScreen() {
@@ -682,13 +660,16 @@ function drawEndWinScreen() {
   // Draw frog and fly
   moveFly();
   drawFly();
+  drawFrog();
 
-  push();
-  fill("#00ff00");
-  noStroke();
-  ellipse(width / 2, height - 100, 150);
-  pop();
+  // Draw restart button
+  drawRestartButton();
 
+  // Display final score
+  displayFinalScore();
+}
+
+function drawRestartButton() {
   // Draw restart button
   push();
   rectMode(CENTER);
@@ -703,8 +684,9 @@ function drawEndWinScreen() {
   textAlign(CENTER, CENTER);
   text("Play again", playButton.x, playButton.y);
   pop();
+}
 
-  // Display final score
+function displayFinalScore() {
   push();
   fill("#ffffff");
   textSize(24);
