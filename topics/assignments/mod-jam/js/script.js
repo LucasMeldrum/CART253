@@ -5,8 +5,8 @@
  * A game of catching flies with your frog-tongue but they fight back...
  * 
  * Instructions:
- * - Move the frog with your mouse
- * - Click to launch the tongue
+ * - Move the frog with A and D
+ * - Click spacebar to launch the tongue
  * - Catch flies
  * - Use your tongue to do damage
  * 
@@ -16,19 +16,22 @@
 
 "use strict";
 
-// Track whether we're on the title, game, boss or end
+//Track whether we're on the title, game, boss or end
 let gameState = "title";
 
-// Track score default for now
+//Track score default for now
 let score = 0;
 
-// Intro dialogue and fly counter before boss
+//Intro dialogue and fly counter before boss
 let fliesEaten = 0;
 let dialogue = "";
 let dialogueTimer = 0;
 
+//Track keyboard input for frog movement
+let moveLeft = false;
+let moveRight = false;
 
-// Our frog
+//Our frog
 const frog = {
   body: {
     x: 320,
@@ -45,7 +48,7 @@ const frog = {
   }
 };
 
-// Our fly (used in both title and game)
+//Our fly (used in both title and game)
 const fly = {
   x: 0,
   y: 200,
@@ -54,7 +57,7 @@ const fly = {
   active: true
 };
 
-// Boss properties
+//Boss properties
 const boss = {
   x: 320,
   y: 150,
@@ -67,13 +70,13 @@ const boss = {
   shootCooldown: 0
 };
 
-// Projectiles shot by boss
+//Projectiles shot by boss
 const projectiles = [];
 
-// Flies summoned by boss (reusing same stats as fly)
+//Flies summoned by boss (reusing same stats as fly)
 const summonedFlies = [];
 
-// Button properties for title screen
+//Button properties for title screen
 const playButton = {
   x: 320,
   y: 380,
@@ -83,13 +86,13 @@ const playButton = {
   text: "Play now",
 };
 
-// Setup function
+//Setup function
 function setup() {
   createCanvas(640, 480);
   resetFly();
 }
 
-// Draw function
+//Draw function
 function draw() {
   if (gameState === "title") {
     drawTitleScreen();
@@ -114,7 +117,7 @@ function draw() {
 function drawTitleScreen() {
   background("#8b8484ff");
 
-  // Title text
+  //Title text
   push();
   textAlign(CENTER, CENTER);
   fill("#004400");
@@ -122,13 +125,13 @@ function drawTitleScreen() {
   text("FrogFrogFrog", width / 2, 120);
   pop();
 
-  // Move the fly for animation
+  //Move the fly for animation
   moveFly();
   drawFly();
 
   drawFrog();
 
-  // Draw play button
+  //Draw play button
   push();
   rectMode(CENTER);
   fill("#00aa00");
@@ -149,27 +152,27 @@ function drawTitleScreen() {
 function drawGameStage() {
   background("#87ceeb");
 
-  // Normal fly movement
+  //Normal fly movement
   if (fly.active) {
     moveFly();
     drawFly();
   }
 
-  // Frog and tongue
+  //Frog and tongue
   moveFrog();
   moveTongue();
   drawFrog();
 
-  // Score
+  //Score
   drawScoreJar();
 
 
-  // Checking for fly being eaten
+  //Checking for fly being eaten
     if (fly.active) {
     checkTongueFlyOverlap();
   }
 
-  // Dialogue display
+  //Dialogue display
   if (dialogueTimer > 0) {
     dialogueTimer--;
     push();
@@ -219,11 +222,51 @@ function resetFly() {
 }
 
 /**
- * Moves frog horizontally with mouse
+ * Moves frog horizontally with A and D keys
  */
 function moveFrog() {
-  frog.body.x = mouseX;
+  if (moveLeft) {
+    frog.body.x -= 10;
+  }
+  if (moveRight) {
+    frog.body.x += 10;
+  }
+
+  //Keep frog within screen bounds
+  frog.body.x = constrain(frog.body.x, frog.body.size / 2, width - frog.body.size / 2);
 }
+
+/**
+ * Key press handler for A and D
+ */
+function keyPressed() {
+  if (key === "a" || key === "A") {
+    moveLeft = true;
+  }
+  else if (key === "d" || key === "D") {
+    moveRight = true;
+  }
+  //Spacebar (32)
+  else if (keyCode === 32) { 
+    if (frog.tongue.state === "idle") {
+      frog.tongue.state = "outbound";
+    }
+  }
+}
+
+/**
+ * Key release handler for A and D
+ */
+function keyReleased() {
+  if (key === "a" || key === "A") {
+    moveLeft = false;
+  }
+  else if (key === "d" || key === "D") {
+    moveRight = false;
+  }
+}
+
+
 
 /**
  * Handles tongue movement
@@ -249,7 +292,7 @@ function moveTongue() {
  * Draws the frog with a body, tongue, eyes, and legs
  */
 function drawFrog() {
-  // Draw tongue (behind head)
+  //Draw tongue (behind head)
   push();
   stroke("#ff0000");
   strokeWeight(frog.tongue.size);
@@ -259,7 +302,7 @@ function drawFrog() {
   ellipse(frog.tongue.x, frog.tongue.y, frog.tongue.size * 1.2);
   pop();
 
-  // Draw legs
+  //Draw legs
   push();
   fill("#008000");
   noStroke();
@@ -267,7 +310,7 @@ function drawFrog() {
   ellipse(frog.body.x + frog.body.size * 0.4, frog.body.y + frog.body.size * 0.4, frog.body.size * 0.5, frog.body.size * 0.3);
   pop();
 
-  // Body (main green circle with shading)
+  //Body (main green circle with shading)
   push();
   noStroke();
   fill("#00cc00");
@@ -276,7 +319,7 @@ function drawFrog() {
   ellipse(frog.body.x, frog.body.y + frog.body.size * 0.1, frog.body.size);
   pop();
 
-  // Eyes
+  //Eyes
   push();
   fill("#99ff99");
   stroke("#006600");
@@ -284,7 +327,7 @@ function drawFrog() {
   ellipse(frog.body.x - frog.body.size * 0.25, frog.body.y - frog.body.size * 0.4, frog.body.size * 0.25);
   ellipse(frog.body.x + frog.body.size * 0.25, frog.body.y - frog.body.size * 0.4, frog.body.size * 0.25);
 
-  // Pupils
+  //Pupils
   fill("#000000");
   noStroke();
   ellipse(frog.body.x - frog.body.size * 0.25, frog.body.y - frog.body.size * 0.4, frog.body.size * 0.1);
@@ -305,7 +348,7 @@ function checkTongueFlyOverlap() {
     frog.tongue.state = "inbound";
     fliesEaten++;
 
-    // Dialogue progression
+    //Dialogue progression
     if (fliesEaten === 1) {
       dialogue = "Why'd you eat my friend?!";
       dialogueTimer = 120;
@@ -321,7 +364,7 @@ function checkTongueFlyOverlap() {
       dialogueTimer = 120;
       resetFly();
 
-      // After last fly, start boss fight
+      //After last fly, start boss fight
       setTimeout(startBossFight, 2000);
     }
     else {
@@ -337,34 +380,34 @@ function checkTongueFlyOverlap() {
 function drawBossStage() {
   background("#a8a8a8ff");
 
-  // Frog and tongue functions
+  //Frog and tongue functions
   moveFrog();
   moveTongue();
   drawFrog();
 
-  // Boss and phases functions
+  //Boss and phases functions
   moveBoss();
   drawBoss();
   handleBossPhases();
 
-  // Projectiles and summoned flies (phase 2 and 3)
+  //Projectiles and summoned flies (phase 2 and 3)
   drawProjectiles();
   moveProjectiles();
   drawSummonedFlies();
   moveSummonedFlies();
 
-  // Tongue overlap with boss and flies and collisions with frog functions
+  //Tongue overlap with boss and flies and collisions with frog functions
   checkTongueBossOverlap();
   checkProjectileFrogCollision();
   checkFlyFrogCollision();
   checkTongueSummonedFlyOverlap();
 
-  // Boss stats and score functions
+  //Boss stats and score functions
   drawBossStageStats();
   drawScoreJar();
 
 
-  // End if player dies at any point
+  //End if player dies at any point
   if (frog.health <= 0) {
     gameState = "endLose";
     boss.active = false;
@@ -375,7 +418,7 @@ function drawBossStage() {
  * Handles boss behavior based on phases (1,2,3)
  */
 function handleBossPhases() {
-  // Boss phases: 1st phase until 20 health, 2nd phase when boss is at <20 health, and 3rd phase until boss is dead
+  //Boss phases: 1st phase until 20 health, 2nd phase when boss is at <20 health, and 3rd phase until boss is dead
   if (boss.health <= 20 && boss.health > 10) {
     boss.phase = 2;
   }
@@ -386,7 +429,7 @@ function handleBossPhases() {
     boss.phase = 1;
   }
 
-  // Phase 2: shoots projectiles downward
+  //Phase 2: shoots projectiles downward
   if (boss.phase === 2) {
     boss.shootCooldown--;
     if (boss.shootCooldown <= 0) {
@@ -394,7 +437,7 @@ function handleBossPhases() {
       boss.shootCooldown = 60;
     }
   }
-  // Phase 3: summons flies periodically that can be shot
+  //Phase 3: summons flies periodically that can be shot
   else if (boss.phase === 3) {
     boss.shootCooldown--;
     if (boss.shootCooldown <= 0) {
@@ -428,7 +471,7 @@ function drawBoss() {
   translate(boss.x, boss.y);
   noStroke();
 
-  // Phase-based body color (gets angrier)
+  //Phase-based body color (gets angrier)
   let bodyColor;
   if (boss.phase === 1) {
     bodyColor = "#444444"; 
@@ -438,16 +481,16 @@ function drawBoss() {
     bodyColor = "#aa0000"; 
   }
 
-  // Draw wings (semi-transparent white)
+  //Draw wings (semi-transparent white)
   fill(255, 255, 255, 150);
   ellipse(-boss.size * 0.6, -boss.size * 0.3, boss.size * 0.8, boss.size * 0.5);
   ellipse(boss.size * 0.6, -boss.size * 0.3, boss.size * 0.8, boss.size * 0.5);
 
-  // Body
+  //Body
   fill(bodyColor);
-  ellipse(0, 0, boss.size * 1.2, boss.size); // main body
+  ellipse(0, 0, boss.size * 1.2, boss.size); //main body
 
-  // Eyes (get redder as phase increases)
+  //Eyes (get redder as phase increases)
   if (boss.phase === 1) {
     fill("#222222");
   }
@@ -626,7 +669,7 @@ function checkTongueBossOverlap() {
   }
 }
 
- // Display boss health and player health
+ //Display boss health and player health
   function drawBossStageStats() {
     push();
     fill("#ffffff");
@@ -643,7 +686,7 @@ function checkTongueBossOverlap() {
  */
 function mousePressed() {
   if (gameState === "title") {
-    // Play button
+    //Play button
     if (
       mouseX > playButton.x - playButton.width / 2 &&
       mouseX < playButton.x + playButton.width / 2 &&
@@ -657,13 +700,8 @@ function mousePressed() {
       return;
     }
   }
-  else if (gameState === "game" || gameState === "boss") {
-    if (frog.tongue.state === "idle") {
-      frog.tongue.state = "outbound";
-    }
-  }
   else if (gameState === "endLose" || gameState === "endWin") {
-    // Restart
+    //Restart
     if (
       mouseX > playButton.x - playButton.width / 2 &&
       mouseX < playButton.x + playButton.width / 2 &&
@@ -685,7 +723,7 @@ function mousePressed() {
 function drawEndLoseScreen() {
   background("#670909ff");
 
-  // Title text
+  //Title text
   push();
   textAlign(CENTER, CENTER);
   fill("#004400");
@@ -693,15 +731,15 @@ function drawEndLoseScreen() {
   text("You Lose!", width / 2, 120);
   pop();
 
-  // Draw frog and fly
+  //Draw frog and fly
   moveFly();
   drawFly();
   drawFrog();
 
-  // Draw restart button
+  //Draw restart button
   drawRestartButton();
 
-  // Display final score
+  //Display final score
   displayFinalScore();
   drawScoreJar();
 }
@@ -712,7 +750,7 @@ function drawEndLoseScreen() {
 function drawEndWinScreen() {
   background("#37aee9ff");
 
-  // Title text
+  //Title text
   push();
   textAlign(CENTER, CENTER);
   fill("#004400");
@@ -720,15 +758,15 @@ function drawEndWinScreen() {
   text("You Win!", width / 2, 120);
   pop();
 
-  // Draw frog and fly
+  //Draw frog and fly
   moveFly();
   drawFly();
   drawFrog();
 
-  // Draw restart button
+  //Draw restart button
   drawRestartButton();
 
-  // Display final score
+  //Display final score
   displayFinalScore();
 }
 
@@ -736,7 +774,7 @@ function drawEndWinScreen() {
  * Restart button
  */
 function drawRestartButton() {
-  // Draw restart button
+  //Draw restart button
   push();
   rectMode(CENTER);
   fill("#00aa00");
@@ -769,22 +807,22 @@ function displayFinalScore() {
  */
 function drawScoreJar() {
   push();
-  // Jar outline
+  //Jar outline
   fill(255, 255, 255, 80);
   stroke("#555555");
   strokeWeight(2);
   rect(width - 100, 20, 60, 100, 10);
 
-  // Flies inside
+  //Flies inside
   fill("#000000");
   noStroke();
   
-  // Max of 10 flies in jar 
+  //Max of 10 flies in jar 
   for (let i = 0; i < min(score, 10); i++) {
     ellipse(width - 70 + random(-10, 10), 100 - i * 8, 6, 6);
   }
 
-  // Text
+  //Text
   textSize(18);
   fill("#ffffff");
   textAlign(CENTER);
