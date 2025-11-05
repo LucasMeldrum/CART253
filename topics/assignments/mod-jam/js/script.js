@@ -1,13 +1,14 @@
 /**
- * Frogfrogfrog
- * Pippin Barr
+ * Fly Boss
+ * Lucas Meldrum
  * 
- * A game of catching flies with your frog-tongue
+ * A game of catching flies with your frog-tongue but they fight back...
  * 
  * Instructions:
  * - Move the frog with your mouse
  * - Click to launch the tongue
  * - Catch flies
+ * - Use your tongue to do damage
  * 
  * Made with p5
  * https://p5js.org/
@@ -21,15 +22,19 @@ let gameState = "title";
 // Track score default for now
 let score = 0;
 
-// Player health (used in boss phases)
-let playerHealth = 5;
+// Intro dialogue and fly counter before boss
+let fliesEaten = 0;
+let dialogue = "";
+let dialogueTimer = 0;
+
 
 // Our frog
 const frog = {
   body: {
     x: 320,
     y: 520,
-    size: 150
+    size: 150,
+    health: 5
   },
   tongue: {
     x: undefined,
@@ -156,8 +161,21 @@ function drawGameStage() {
   drawFrog();
 
   // Checking for fly being eaten
-  if (fly.active) {
+    if (fly.active) {
     checkTongueFlyOverlap();
+  }
+
+  // Dialogue display
+  if (dialogueTimer > 0) {
+    dialogueTimer--;
+    push();
+    fill("#ffffff");
+    stroke("#000000");
+    strokeWeight(3);
+    textSize(24);
+    textAlign(CENTER);
+    text(dialogue, width / 2, height - 60);
+    pop();
   }
 }
 
@@ -186,11 +204,14 @@ function drawFly() {
 }
 
 /**
- * Resets fly position
+ * Resets fly position (only for first 3 flies before boss)
  */
 function resetFly() {
-  fly.x = 0;
-  fly.y = random(50, 300);
+  if (fliesEaten < 3) {
+    fly.x = 0;
+    fly.y = random(50, 300);
+    fly.active = true;
+  }
 }
 
 /**
@@ -268,19 +289,43 @@ function drawFrog() {
 }
 
 /**
- * Tongue-Fly overlap check
+ * Tongue-Fly overlap check (3-fly intro before boss)
  */
 function checkTongueFlyOverlap() {
   const d = dist(frog.tongue.x, frog.tongue.y, fly.x, fly.y);
   const eaten = d < frog.tongue.size / 2 + fly.size / 2;
 
-  if (eaten) {
+  if (eaten && frog.tongue.state === "outbound") {
     score++;
     fly.active = false;
     frog.tongue.state = "inbound";
-    startBossFight();
+    fliesEaten++;
+
+    // Dialogue progression
+    if (fliesEaten === 1) {
+      dialogue = "Why'd you eat my friend?!";
+      dialogueTimer = 120;
+      resetFly();
+    }
+    else if (fliesEaten === 2) {
+      dialogue = "I'm warning you... don't eat any more of the flies!";
+      dialogueTimer = 120;
+      resetFly();
+    }
+    else if (fliesEaten === 3) {
+      dialogue = "That's it! You've gone too far!";
+      dialogueTimer = 120;
+      resetFly();
+
+      // After last fly, start boss fight
+      setTimeout(startBossFight, 2000);
+    }
+    else {
+      resetFly();
+    }
   }
 }
+
 
 /**
  * Boss fight stage with 3 phases
@@ -314,7 +359,7 @@ function drawBossStage() {
   drawBossStageStats();
 
   // End if player dies at any point
-  if (playerHealth <= 0) {
+  if (frog.health <= 0) {
     gameState = "endLose";
     boss.active = false;
   }
@@ -361,9 +406,10 @@ function startBossFight() {
   boss.active = true;
   boss.health = 30;
   boss.phase = 1;
-  playerHealth = 3;
+  frog.health = 5;
   projectiles.length = 0;
   summonedFlies.length = 0;
+  fliesEaten = 0;
 }
 
 /**
@@ -452,7 +498,7 @@ function moveProjectiles() {
  */
 function drawProjectiles() {
   push();
-  fill("#ff8800");
+  fill("#ff0000ff");
   noStroke();
   for (const p of projectiles) {
     ellipse(p.x, p.y, p.size);
@@ -469,7 +515,7 @@ function checkProjectileFrogCollision() {
     const d = dist(p.x, p.y, frog.body.x, frog.body.y);
     if (d < p.size / 2 + frog.body.size / 2) {
       projectiles.splice(i, 1);
-      playerHealth--;
+      frog.health--;
     }
   }
 }
@@ -533,7 +579,7 @@ function checkFlyFrogCollision() {
     const d = dist(f.x, f.y, frog.body.x, frog.body.y);
     if (d < f.size / 2 + frog.body.size / 2) {
       summonedFlies.splice(i, 1);
-      playerHealth--;
+      frog.health--;
     }
   }
 }
@@ -581,7 +627,7 @@ function checkTongueBossOverlap() {
     textSize(20);
     textAlign(LEFT, TOP);
     text("Boss HP: " + boss.health, 20, 20);
-    text("Frog HP: " + playerHealth, 20, 45);
+    text("Frog HP: " + frog.health, 20, 45);
     text("Phase: " + boss.phase, 20, 70);
     pop();
   }
@@ -600,6 +646,7 @@ function mousePressed() {
     ) {
       gameState = "game";
       fly.active = true;
+      fliesEaten = 0;
       resetFly();
       return;
     }
@@ -611,12 +658,18 @@ function mousePressed() {
   }
   else if (gameState === "endLose" || gameState === "endWin") {
     // Restart
+    if (
+      mouseX > playButton.x - playButton.width / 2 &&
+      mouseX < playButton.x + playButton.width / 2 &&
+      mouseY > playButton.y - playButton.height / 2 &&
+      mouseY < playButton.y + playButton.height / 2
+    ) {
     gameState = "title";
     fly.active = true;
     boss.active = false;
     score = 0;
-    playerHealth = 3;
     resetFly();
+    }
   }
 }
 
