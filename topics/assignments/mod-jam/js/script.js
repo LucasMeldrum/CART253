@@ -1,5 +1,5 @@
 /**
- * Fly Boss
+ * Fly Boss (FrogFrogFrog)
  * Lucas Meldrum
  * 
  * A game of catching flies with your frog-tongue but they fight back...
@@ -159,6 +159,10 @@ function drawGameStage() {
   moveFrog();
   moveTongue();
   drawFrog();
+
+  // Score
+  drawScoreJar();
+
 
   // Checking for fly being eaten
     if (fly.active) {
@@ -355,8 +359,10 @@ function drawBossStage() {
   checkFlyFrogCollision();
   checkTongueSummonedFlyOverlap();
 
-  // Boss stats function
+  // Boss stats and score functions
   drawBossStageStats();
+  drawScoreJar();
+
 
   // End if player dies at any point
   if (frog.health <= 0) {
@@ -674,10 +680,10 @@ function mousePressed() {
 }
 
 /**
- * End title screen
+ * End title screen on loss
  */
 function drawEndLoseScreen() {
-  background("#000000ff");
+  background("#670909ff");
 
   // Title text
   push();
@@ -697,10 +703,14 @@ function drawEndLoseScreen() {
 
   // Display final score
   displayFinalScore();
+  drawScoreJar();
 }
 
+/**
+ * End title screen on win
+ */
 function drawEndWinScreen() {
-  background("#000000ff");
+  background("#37aee9ff");
 
   // Title text
   push();
@@ -722,6 +732,9 @@ function drawEndWinScreen() {
   displayFinalScore();
 }
 
+/**
+ * Restart button
+ */
 function drawRestartButton() {
   // Draw restart button
   push();
@@ -739,6 +752,9 @@ function drawRestartButton() {
   pop();
 }
 
+/**
+ * Displaying score
+ */
 function displayFinalScore() {
   push();
   fill("#ffffff");
@@ -747,3 +763,32 @@ function displayFinalScore() {
   text("Final Score: " + score, width / 2, 320);
   pop();
 }
+
+/**
+ * Draws a fly jar that shows the score count
+ */
+function drawScoreJar() {
+  push();
+  // Jar outline
+  fill(255, 255, 255, 80);
+  stroke("#555555");
+  strokeWeight(2);
+  rect(width - 100, 20, 60, 100, 10);
+
+  // Flies inside
+  fill("#000000");
+  noStroke();
+  
+  // Max of 10 flies in jar 
+  for (let i = 0; i < min(score, 10); i++) {
+    ellipse(width - 70 + random(-10, 10), 100 - i * 8, 6, 6);
+  }
+
+  // Text
+  textSize(18);
+  fill("#ffffff");
+  textAlign(CENTER);
+  text(score, width - 70, 160);
+  pop();
+}
+
