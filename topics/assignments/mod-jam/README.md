@@ -1,6 +1,9 @@
 # Frogfrogfrog
 
 A game about catching flies... but there's a twist. Catch too many and they might fight back!
+Use A and D to move and spacebar to attack. Goodluck! 
+
+Used similar code for movement of flies from the original Frogfrogfrog and array ideas we learnt in class (projectiles and flies)
 
 ### Changes made to the orginial:
 - Title screen (with working buttons)

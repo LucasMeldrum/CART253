@@ -100,12 +100,10 @@ function preload() {
   intenseMusic = loadSound("assets/sounds/intense.mp3");
 }
 
-
 function setup() {
   createCanvas(640, 480);
   resetFly();
 }
-
 
 function draw() {
   if (gameState === "title") {
