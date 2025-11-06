@@ -86,30 +86,68 @@ const playButton = {
   text: "Play now",
 };
 
-//Setup function
+//Sounds
+let tongueSound;
+let peacefulMusic;
+let intenseMusic;
+
+/**
+ * Preload the sounds
+ */
+function preload() {
+  tongueSound = loadSound("assets/sounds/tongue.mp3");
+  peacefulMusic = loadSound("assets/sounds/peaceful.mp3");
+  intenseMusic = loadSound("assets/sounds/intense.mp3");
+}
+
+
 function setup() {
   createCanvas(640, 480);
   resetFly();
 }
 
-//Draw function
+
 function draw() {
   if (gameState === "title") {
     drawTitleScreen();
+
+    if (!peacefulMusic.isPlaying()) {
+      intenseMusic.stop();
+      peacefulMusic.loop();
+    }
   }
+
   else if (gameState === "game") {
     drawGameStage();
+
+    if (!peacefulMusic.isPlaying()) {
+      intenseMusic.stop();
+      peacefulMusic.loop();
+    }
   }
+
   else if (gameState === "boss") {
     drawBossStage();
+
+    if (!intenseMusic.isPlaying()) {
+      peacefulMusic.stop();
+      intenseMusic.loop();
+    }
   }
+
   else if (gameState === "endLose") {
-    drawEndLoseScreen();  
+    drawEndLoseScreen();
+    peacefulMusic.stop();
+    intenseMusic.stop();
   }
+
   else if (gameState === "endWin") {
-    drawEndWinScreen();  
+    drawEndWinScreen();
+    peacefulMusic.stop();
+    intenseMusic.stop();
   }
 }
+
 
 /**
  * Title screen with a frog, fly, and "Play Now" button
@@ -250,6 +288,7 @@ function keyPressed() {
   else if (keyCode === 32) { 
     if (frog.tongue.state === "idle") {
       frog.tongue.state = "outbound";
+      tongueSound.play();
     }
   }
 }
