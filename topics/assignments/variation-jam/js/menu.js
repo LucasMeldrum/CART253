@@ -78,14 +78,16 @@ function drawYarCursor(x, y) {
     translate(x, y);
     noStroke();
 
-    fill(255, 180, 0);
-    ellipse(0, 0, 18, 26);
+    fill(255, 200, 50);
+    ellipse(0, 0, 12, 18);
 
-    triangle(-12, -5, -3, 0, -12, 5);
-    triangle(12, -5, 3, 0, 12, 5);
+    fill(180, 220, 255, 180);
+    ellipse(-10, -2, 12, 20);
+    ellipse(10, -2, 12, 20);
 
-    fill(255, 50, 50);
-    ellipse(0, -14, 10, 10);
+    fill(255, 0, 0);
+    ellipse(-3, -4, 3, 3);
+    ellipse(3, -4, 3, 3);
 
     pop();
 }
