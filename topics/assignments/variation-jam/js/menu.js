@@ -1,53 +1,91 @@
 /**
- * This menu file contains the code to run *only* the menu part of the program.
- * Note how it has its own draw, menuDraw(), and its own keyPressed, menuKeyPressed().
- * This keeps the stuff the menu needs to do *separate* from the rest of the program.
+ * Variation Menu
+ * Custom clickable menu with a Yar cursor
  */
 
-const menuText = `
-(R) Red variation
-(G) Green variation
-(B) Blue variation`
+"use strict";
 
-/**
- * Display the main menu
- */
+let state = "menu";
+
+//Menu buttons
+let buttons = [
+    { label: "Variation 1", x: 150, y: 150, w: 200, h: 60, target: "v1" },
+    { label: "Variation 2", x: 150, y: 250, w: 200, h: 60, target: "v2" },
+    { label: "Variation 3", x: 150, y: 350, w: 200, h: 60, target: "v3" }
+];
+
+//Draw menu
 function menuDraw() {
     background(0);
 
+    for (let b of buttons) {
+        drawMenuButton(b);
+    }
+
+    drawYarCursor(mouseX, mouseY);
+}
+
+//Draw a single button
+function drawMenuButton(btn) {
+    let hover =
+        mouseX > btn.x &&
+        mouseX < btn.x + btn.w &&
+        mouseY > btn.y &&
+        mouseY < btn.y + btn.h;
+
     push();
+    rectMode(CORNER);
+    stroke(255);
+    strokeWeight(2);
+    fill(hover ? 70 : 40);
+    rect(btn.x, btn.y, btn.w, btn.h, 10);
+
     fill(255);
-    textSize(32);
     textAlign(CENTER, CENTER);
-    text(menuText, width / 2, height / 2);
+    textSize(26);
+    text(btn.label, btn.x + btn.w / 2, btn.y + btn.h / 2);
     pop();
 }
 
-/**
- * Listen to the keyboard
- */
-function menuKeyPressed(event) {
-    switch (event.keyCode) {
-        case 82:
-            state = "red-variation";
-            redSetup();
-            break;
+//Mouse click detection
+function menuMousePressed() {
+    for (let b of buttons) {
+        if (
+            mouseX > b.x &&
+            mouseX < b.x + b.w &&
+            mouseY > b.y &&
+            mouseY < b.y + b.h
+        ) {
+            state = b.target;
 
-        case 71:
-            state = "green-variation";
-            greenSetup();
-            break;
-
-        case 66:
-            state = "blue-variation";
-            blueSetup();
-            break;
+            if (b.target === "v1") v1Setup();
+            if (b.target === "v2") v2Setup();
+            if (b.target === "v3") v3Setup();
+        }
     }
 }
 
-/**
- * This will be called whenever the mouse is pressed while the menu is active
- */
-function menuMousePressed() {
+//Keyboard for menu
+function menuKeyPressed(event) {
+    if (event.keyCode === 86) { state = "v1"; v1Setup(); } // V
+    if (event.keyCode === 87) { state = "v2"; v2Setup(); } // W
+    if (event.keyCode === 88) { state = "v3"; v3Setup(); } // X
+}
 
+//Draw Yar cursor
+function drawYarCursor(x, y) {
+    push();
+    translate(x, y);
+    noStroke();
+
+    fill(255, 180, 0);
+    ellipse(0, 0, 18, 26);
+
+    triangle(-12, -5, -3, 0, -12, 5);
+    triangle(12, -5, 3, 0, 12, 5);
+
+    fill(255, 50, 50);
+    ellipse(0, -14, 10, 10);
+
+    pop();
 }
