@@ -9,74 +9,131 @@
 
 "use strict";
 
-let state = "menu";
-
-/**
- * Create the canvas
-*/
+//Setup function
 function setup() {
     createCanvas(500, 500);
+    noCursor(); 
 }
 
-
-/**
- * Display the menu or the current variation
-*/
+//Draw function
 function draw() {
     switch (state) {
         case "menu":
             menuDraw();
             break;
-        case "red-variation":
-            redDraw();
-            break
-        case "green-variation":
-            greenDraw();
+
+        case "v1":
+            v1Draw();
             break;
-        case "blue-variation":
-            blueDraw();
+
+        case "v2":
+            v2Draw();
+            break;
+
+        case "v3":
+            v3Draw();
             break;
     }
 }
 
-/**
- * Listen for mouse pressed and call the function for it in the
- * current state
- */
+//Mouse pressed listener 
 function mousePressed() {
     switch (state) {
         case "menu":
             menuMousePressed();
             break;
-        case "red-variation":
-            redMousePressed();
-            break
-        case "green-variation":
-            greenMousePressed();
+
+        case "v1":
+            v1MousePressed();
             break;
-        case "blue-variation":
-            blueMousePressed();
+
+        case "v2":
+            v2MousePressed();
+            break;
+
+        case "v3":
+            v3MousePressed();
             break;
     }
 }
 
-/**
- * Listen for keypressed and call the function for it in the
- * current state
- */
+//Key pressed listener 
 function keyPressed(event) {
     switch (state) {
         case "menu":
             menuKeyPressed(event);
             break;
-        case "red-variation":
-            redKeyPressed(event);
-            break
-        case "green-variation":
-            greenKeyPressed(event);
+
+        case "v1":
+            v1KeyPressed(event);
             break;
-        case "blue-variation":
-            blueKeyPressed(event);
+
+        case "v2":
+            v2KeyPressed(event);
+            break;
+
+        case "v3":
+            v3KeyPressed(event);
             break;
     }
 }
+
+/**
+ * Variation #1 of Yars Revenge
+ * x
+ */
+
+function v1Setup() {}
+
+function v1Draw() {
+    background(255, 150, 150);
+    textAlign(CENTER, CENTER);
+    textSize(32);
+    text("Variation 1", width / 2, height / 2);
+}
+
+function v1KeyPressed(event) {
+    if (event.keyCode === 27) state = "menu"; 
+}
+
+function v1MousePressed() {}
+
+/**
+ * Variation #2 of Yars Revenge
+ * x
+ */
+
+function v2Setup() {}
+
+function v2Draw() {
+    background(150, 255, 150);
+    textAlign(CENTER, CENTER);
+    textSize(32);
+    text("Variation 2", width / 2, height / 2);
+}
+
+function v2KeyPressed(event) {
+    if (event.keyCode === 27) state = "menu";
+}
+
+function v2MousePressed() {}
+
+/**
+ * Variation #3 of Yars Revenge
+ * x
+ */
+
+function v3Setup() {}
+
+function v3Draw() {
+    background(150, 150, 255);
+    textAlign(CENTER, CENTER);
+    textSize(32);
+    text("Variation 3", width / 2, height / 2);
+}
+
+function v3KeyPressed(event) {
+    if (event.keyCode === 27) state = "menu";
+}
+
+function v3MousePressed() {}
