@@ -9,10 +9,12 @@ Another change I felt as I progressed through the class was my creative flow. Us
 With this new creative mindset, I want to priortize doing something fun and artistic in my projects. I am a big fan of UI/UX design and games and I want to maybe create projects surrounding those ideas. I want to also help people in the future but do it in a way that is creative and new which is challenging for me. It is very difficult for me to find new/unique ways of doing things such as coding, developping games, and making things. The line: "What can you do now as an artist who codes?" seems almost inverted to what my experience is. I almost feel like a coder who wants to adopt art into my projects not the other way around. 
 
 Currently, to follow this idea of creating an artistic and code heavy project, I have been developping an app to help people with addictions. One is for screen time since we are all addicted to our phones and the other (that I haven't started yet) is for gambling addictions. I think these two apps definitely fall under the conjunction of creativity and coding. For my screen time app, I have been following the principles of design thinking while attempting to make a modern and visually pleasing UI. The app's main idea is to track screen time and compare that to your friends to gamefy the idea of trying to reduce it. I believe it encapsulates both creativity and coding since the idea itself and the UI come from an artist point of view while the actual implementation is all code. Initially, I had to set up an emulator to emulate the app on a Google Pixel:
-[Emulation](/media/Emulation.png)
+
+![Emulation](/media/Emulation.png)
 
 Then after a couple months of coding using Dart/Flutter, API calls and syncing it with Google's databse I was able to create a nice UI and functioning app:
-[App](/media/App_v1.png)
+
+![App](/media/App_v1.png)
 
 
 
