@@ -16,8 +16,17 @@ Then after a couple months of coding using Dart/Flutter, API calls and syncing i
 
 ![App](/media/App_v1.png)
 
+Although it seems like a simple app, this project became a combination of both my creative and coding mind. I used my technical knowledge of coding (all the ideas we learnt in class) and my creative/design thinking mind to make something that is unique and different. I enjoy coding the most when I am able to visually see what I am doing and what effects each line of code has on my final project. One of the ways the class impacted the development of this app is the try/test method and seeing where things lead. For example, in class there were always moments of attempting strange/weird numbers as variables to see what changed and how. While coding the app, I took this approach to see if anything interesting/unique came out of it and it allowed me to create some unique features (graphs and vs friends on the other pages). This creative style of coding will definitely be on my mind as I continue to develop games/apps and will hopefully allow for new ideas to sprout.
+
+When it comes to owning the role of a creative coder I still don't feel fully there. I think a big part of that hesitation comes from the fact that I’ve always approached programming from a strictly technical or engineering/oriented mindset. For most of my degree and internships, “good code” meant efficient program and clean organized code. In my world, creativity wasn't usually the goal. So stepping into a space where code is meant to be expressive, playful, and even messy felt different. Although it felt different and distant to code creatively, I do feel closer to that role than I did at the start of the course
+
+Working with p5.js gave me opportunities to write code that exists for the sake of visual or interactive experience rather than purely function. Thinking of the art jam, I wrote code to just see something visually fun without worrying if things were off or not perfect. I wrote loops to create motion and had randomness to simulate something exciting in WebGL:  
+
+![art-jam](/media/art_jam.png)
 
 
+This class and that assignment specifically has definitely made me rethink what coding can be used for. I started seeing how even basic concepts like arrays of objects, or the idea of continuous drawing could contribute to something expressive. That shift has helped me understand creative coding not as a separate idea but as an extension of the programmer I already am.
 
+Ultimately, although I am still on the journey of finding my creative side, I think as I near the end of my university experience (less than a year now!), I’m beginning to understand how my technical strength and creative side can support each other rather than conflict. This course pushed me to experiment, to make space for play, and to see code as more than a tool for solving problems. I may not fully identify as a creative coder yet, but I’m far closer than when I began. With every project I work on that blends design and interaction, like my app, I feel myself getting more confident into that role. As I move forward with my life and coding experience, I am excited to keep building work that reflects both sides of who I am: a programmer with a growing desire to make things that are not just functional, but interactive, helpful, and creative.
 
 
