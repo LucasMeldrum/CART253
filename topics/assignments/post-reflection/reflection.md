@@ -25,7 +25,7 @@ Working with p5.js gave me opportunities to write code that exists for the sake 
 ![art-jam](/media/art_jam.png)
 
 
-This class and that assignment specifically has definitely made me rethink what coding can be used for. I started seeing how even basic concepts like arrays of objects, or the idea of continuous drawing could contribute to something expressive. That shift has helped me understand creative coding not as a separate idea but as an extension of the programmer I already am.
+This class and that assignment specifically has definitely made me rethink what coding can be used for. I started seeing how even basic concepts like arrays, loops, or the idea of continuous drawing could contribute to something expressive. That shift has helped me understand creative coding not as a separate idea but as an extension of the programmer I already am.
 
 Ultimately, although I am still on the journey of finding my creative side, I think as I near the end of my university experience (less than a year now!), I’m beginning to understand how my technical strength and creative side can support each other rather than conflict. This course pushed me to experiment, to make space for play, and to see code as more than a tool for solving problems. I may not fully identify as a creative coder yet, but I’m far closer than when I began. With every project I work on that blends design and interaction, like my app, I feel myself getting more confident into that role. As I move forward with my life and coding experience, I am excited to keep building work that reflects both sides of who I am: a programmer with a growing desire to make things that are not just functional, but interactive, helpful, and creative.
 
