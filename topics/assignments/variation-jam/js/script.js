@@ -604,3 +604,304 @@ function v2KeyPressed(event) {
         }
     }
 }
+
+//
+// Variation #3 — Darkness Mode
+//
+
+//Player
+let v3Player = {
+    x: 20,
+    y: 250,
+    speed: 3,
+    size: 26,
+    shooting: false
+};
+
+//Boss
+let v3Boss = {
+    x: 360,
+    y: 250,
+    size: 45,
+    ySpeed: 2,
+    health: 5,
+    attacking: false
+};
+
+//Player missile
+let v3Missile = {
+    x: null,
+    y: null,
+    speed: 8,
+    w: 8,
+    h: 3
+};
+
+//Boss homing shot
+let v3EnemyShot = {
+    x: null,
+    y: null,
+    speed: 2,
+    size: 16
+};
+
+//Boss straight shot
+let v3StraightShot = {
+    x: null,
+    y: null,
+    speed: 3,
+    size: 14
+};
+
+//Shockwave
+let v3Shockwave = {
+    active: false,
+    radius: 0,
+    maxRadius: 1200,
+    cooldown: 300
+};
+
+//Neutral zone
+let v3Zone = {
+    x: 75,
+    w: 55,
+    h: 500
+};
+
+//Sounds
+let sndShoot, sndBossShoot, sndShockwave, sndHit;
+
+//Load sounds
+function preload() {
+    sndShoot = loadSound("assets/sounds/shoot.mp3");
+    sndBossShoot = loadSound("assets/sounds/boss_shoot.mp3");
+    sndShockwave = loadSound("assets/sounds/shockwave.mp3");
+    sndHit = loadSound("assets/sounds/hit.mp3");
+}
+
+//Setup
+function v3Setup() {
+    resetV3();
+}
+
+//Reset on win or lose
+function resetV3() {
+    v3Player.x = 20;
+    v3Player.y = height / 2;
+
+    v3Boss.x = width - 140;
+    v3Boss.y = height / 2;
+    v3Boss.health = 5;
+
+    v3Missile.x = null;
+    v3EnemyShot.x = null;
+    v3StraightShot.x = null;
+
+    v3Shockwave.active = false;
+    v3Shockwave.radius = 0;
+    v3Shockwave.cooldown = 300;
+
+    v3Player.shooting = false;
+    v3Boss.attacking = false;
+}
+
+//Draw function
+function v3Draw() {
+    background(0);
+
+    //Safe zone
+    push();
+    rectMode(CORNER);
+    noStroke();
+    fill(190, 170, 255, 120);
+    rect(v3Zone.x, 0, v3Zone.w, v3Zone.h);
+    pop();
+
+
+    //Player controls WASD
+    if (keyIsDown(87)) v3Player.y -= v3Player.speed;
+    if (keyIsDown(83)) v3Player.y += v3Player.speed;
+    if (keyIsDown(65)) v3Player.x -= v3Player.speed;
+    if (keyIsDown(68)) v3Player.x += v3Player.speed;
+
+    v3Player.x = constrain(v3Player.x, 0, width);
+    v3Player.y = constrain(v3Player.y, 0, height);
+
+    let inZone = (v3Player.x > v3Zone.x && v3Player.x < v3Zone.x + v3Zone.w);
+
+    //Boss movement
+    v3Boss.y += v3Boss.ySpeed;
+    if (v3Boss.y < 40 || v3Boss.y > height - 40)
+        v3Boss.ySpeed *= -1;
+
+
+    //Lights for every attack
+    if (v3Player.shooting && v3Missile.x !== null)
+        drawLight(v3Player.x, v3Player.y, 80);
+
+    if (v3Missile.x !== null)
+        drawLight(v3Missile.x, v3Missile.y, 60);
+
+    if (v3StraightShot.x !== null)
+        drawLight(v3StraightShot.x, v3StraightShot.y, 70);
+
+    if (v3EnemyShot.x !== null)
+        drawLight(v3EnemyShot.x, v3EnemyShot.y, 70);
+
+    if (v3Shockwave.active)
+        drawLight(v3Boss.x, v3Boss.y, 120);
+
+
+    //Black player sprite
+    push();
+    noStroke();
+    fill(0);
+    ellipse(v3Player.x, v3Player.y, v3Player.size, v3Player.size * 0.6);
+    pop();
+
+
+    //Black boss sprite
+    push();
+    noStroke();
+    fill(0);
+    ellipse(v3Boss.x, v3Boss.y, v3Boss.size);
+    pop();
+
+
+    //Health bar
+    push();
+    rectMode(CORNER);
+    noStroke();
+    fill(255);
+    rect(20, 20, 200, 12);
+
+    fill(255, 80, 120);
+    rect(20, 20, (v3Boss.health / 5) * 200, 12);
+    pop();
+
+
+    //Player missile code
+    if (v3Missile.x !== null) {
+        v3Missile.x += v3Missile.speed;
+
+        push();
+        noStroke();
+        fill(0);
+        rectMode(CENTER);
+        rect(v3Missile.x, v3Missile.y, v3Missile.w, v3Missile.h);
+        pop();
+
+        if (v3Missile.x > width + 100)
+            v3Missile.x = null;
+
+        if (dist(v3Missile.x, v3Missile.y, v3Boss.x, v3Boss.y) < v3Boss.size / 2) {
+            sndHit.play();
+            v3Missile.x = null;
+            v3Boss.health--;
+
+            if (v3Boss.health <= 0) {
+                resetV3();
+                state = "win";
+                return;
+            }
+        }
+    }
+
+    //Boss straight shot
+    if (v3StraightShot.x !== null) {
+
+        v3StraightShot.x -= v3StraightShot.speed;
+
+        push();
+        noStroke();
+        fill(0);
+        ellipse(v3StraightShot.x, v3StraightShot.y, v3StraightShot.size);
+        pop();
+
+        if (!inZone &&
+            dist(v3StraightShot.x, v3StraightShot.y, v3Player.x, v3Player.y) < v3Player.size / 2) {
+            resetV3();
+            state = "lose";
+            return;
+        }
+
+        if (v3StraightShot.x < -50)
+            v3StraightShot.x = null;
+    }
+
+    if (v3StraightShot.x === null) {
+        v3StraightShot.x = v3Boss.x - 20;
+        v3StraightShot.y = v3Boss.y;
+        v3Boss.attacking = true;
+    }
+
+
+    //Boss shockwave attack
+    v3Shockwave.cooldown--;
+
+    if (v3Shockwave.cooldown <= 0 && !v3Shockwave.active) {
+        sndShockwave.play();
+        v3Shockwave.active = true;
+        v3Shockwave.radius = 0;
+        v3Shockwave.cooldown = 300;
+    }
+
+    if (v3Shockwave.active) {
+        v3Shockwave.radius += 14;
+
+        push();
+        stroke(255);
+        strokeWeight(8);
+        noFill();
+        ellipse(v3Boss.x, v3Boss.y, v3Shockwave.radius);
+        pop();
+
+        let d = dist(v3Boss.x, v3Boss.y, v3Player.x, v3Player.y);
+        let ringEdge = v3Shockwave.radius / 2;
+
+        if (!inZone && abs(d - ringEdge) < 12) {
+            resetV3();
+            state = "lose";
+            return;
+        }
+
+        if (v3Shockwave.radius > v3Shockwave.maxRadius) {
+            v3Shockwave.active = false;
+            v3Shockwave.radius = 0;
+        }
+    }
+
+
+    //UI
+    push();
+    noStroke();
+    fill(255);
+    textAlign(LEFT, TOP);
+    textSize(16);
+    text("Darkness Mode\nLights appear only on attacks", 10, 60);
+    pop();
+
+    //Reset
+    v3Player.shooting = false;
+}
+
+//Shoot on mouse click
+function v3MousePressed() {
+    let inZone = (v3Player.x > v3Zone.x && v3Player.x < v3Zone.x + v3Zone.w);
+
+    if (mouseButton === LEFT && v3Missile.x === null && !inZone) {
+        sndShoot.play();
+        v3Missile.x = v3Player.x;
+        v3Missile.y = v3Player.y;
+        v3Player.shooting = true;
+    }
+}
+
+//Light circle function
+function drawLight(x, y, r) {
+    push();
+    noStroke();
+    fill(255, 255, 255, 160);
+    ellipse(x, y, r);
+    pop();
+}
