@@ -9,9 +9,9 @@ let state = "menu";
 
 //Menu buttons
 let buttons = [
-    { label: "Variation 1", x: 150, y: 150, w: 200, h: 60, target: "v1" },
-    { label: "Variation 2", x: 150, y: 250, w: 200, h: 60, target: "v2" },
-    { label: "Variation 3", x: 150, y: 350, w: 200, h: 60, target: "v3" }
+    { label: "Yars Revenge  ", x: 100, y: 150, w: 300, h: 60, target: "v1" },
+    { label: "Yars PvP (2)  ", x: 100, y: 250, w: 300, h: 60, target: "v2" },
+    { label: "Yars DarkSound", x: 100, y: 350, w: 300, h: 60, target: "v3" }
 ];
 
 //Draw menu
