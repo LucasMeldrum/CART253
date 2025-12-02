@@ -33,6 +33,14 @@ function draw() {
         case "v3":
             v3Draw();
             break;
+
+        case "win":
+            winDraw();
+            break;
+
+        case "lose":
+            loseDraw();
+            break;
     }
 }
 
@@ -75,7 +83,42 @@ function keyPressed(event) {
         case "v3":
             v3KeyPressed(event);
             break;
+
+        case "win":
+            if (event.keyCode === 32) state = "menu";
+            break;
+
+        case "lose":
+            if (event.keyCode === 32) state = "menu";
+            break;
+
     }
+}
+
+//Win Screen
+function winDraw() {
+    background(20, 200, 80);
+
+    fill(255);
+    textAlign(CENTER, CENTER);
+    textSize(40);
+    text("YOU WIN!", width / 2, height / 2 - 40);
+
+    textSize(20);
+    text("Press SPACE to return to menu", width / 2, height / 2 + 20);
+}
+
+//Lose Screen
+function loseDraw() {
+    background(200, 40, 40);
+
+    fill(255);
+    textAlign(CENTER, CENTER);
+    textSize(40);
+    text("YOU LOSE!", width / 2, height / 2 - 40);
+
+    textSize(20);
+    text("Press SPACE to return to menu", width / 2, height / 2 + 20);
 }
 
 /**
@@ -109,7 +152,7 @@ let v1Boss = {
 let v1EnemyShot = {
     x: null,
     y: null,
-    speed: 2,
+    speed: 1.5,
     size: 16
 };
 
@@ -124,6 +167,14 @@ let v1Zone = {
     x: 75,
     w: 55,
     h: 0
+};
+
+//Shockwave attack
+let v1Shockwave = {
+    active: false,
+    radius: 0,
+    maxRadius: 1200,
+    cooldown: 300 
 };
 
 function v1Setup() {
@@ -141,25 +192,30 @@ function resetStats() {
     v1Boss.health = 5;
     v1Boss.fireCooldown = 0;
 
-    //Reset missiles
+    //Reset projectiles
     v1Missile.x = null;
     v1EnemyShot.x = null;
     v1StraightShot.x = null;
 
-    //Zone height
+    //Zone
     v1Zone.h = height;
+
+    //Shockwave
+    v1Shockwave.active = false;
+    v1Shockwave.radius = 0;
+    v1Shockwave.cooldown = 300;
 }
 
 function v1Draw() {
     background(40, 45, 60);
 
-    //Draw neutral zone
+    //Neutral zone
     rectMode(CORNER);
     noStroke();
     fill(140, 110, 220, 100);
     rect(v1Zone.x, 0, v1Zone.w, v1Zone.h);
 
-    //WASD for movement
+    //Movement
     if (keyIsDown(87)) v1Player.y -= v1Player.speed;
     if (keyIsDown(83)) v1Player.y += v1Player.speed;
     if (keyIsDown(65)) v1Player.x -= v1Player.speed;
@@ -187,21 +243,23 @@ function v1Draw() {
         fill(255, 240, 50);
         rectMode(CENTER);
         rect(v1Missile.x, v1Missile.y, v1Missile.w, v1Missile.h);
+
         if (v1Missile.x > width + 100) v1Missile.x = null;
 
-        //Check for boss hit
+        //Boss hit
         if (dist(v1Missile.x, v1Missile.y, v1Boss.x, v1Boss.y) < v1Boss.size / 2) {
             v1Missile.x = null;
             v1Boss.health--;
+
             if (v1Boss.health <= 0) {
                 resetStats();
-                state = "menu";
+                state = "win";
                 return;
             }
         }
     }
 
-    //Simple boss movement
+    //Boss movement
     v1Boss.y += v1Boss.ySpeed;
     if (v1Boss.y < 40 || v1Boss.y > height - 40) v1Boss.ySpeed *= -1;
 
@@ -212,7 +270,17 @@ function v1Draw() {
     ellipse(v1Boss.x + 10, v1Boss.y - 10, 10, 10);
     ellipse(v1Boss.x + 10, v1Boss.y + 10, 10, 10);
 
-    //Boss homing missile
+    //Boss health bar
+    rectMode(CORNER);
+
+    fill(255);
+    rect(20, 20, 200, 12);
+
+    fill(255, 80, 100);
+    rect(20, 20, (v1Boss.health / 5) * 200, 12);
+
+
+    //Boss homing shot
     if (v1EnemyShot.x === null) {
         v1Boss.fireCooldown--;
         if (v1Boss.fireCooldown <= 0) {
@@ -232,23 +300,16 @@ function v1Draw() {
         fill(255, 100, 140);
         ellipse(v1EnemyShot.x, v1EnemyShot.y, v1EnemyShot.size, v1EnemyShot.size);
 
-        if (v1EnemyShot.x < -300) v1EnemyShot.x = null;
-
-        if (!inZone) {
-            let hit = dist(v1EnemyShot.x, v1EnemyShot.y, v1Player.x, v1Player.y);
-            if (hit < v1Player.size / 2) {
-                resetStats();
-                state = "menu";
-
-                //Spawn new homing shot immediately
-                v1EnemyShot.x = v1Boss.x - 20;
-                v1EnemyShot.y = v1Boss.y;
-                v1Boss.fireCooldown = 90;
-            }
+        if (!inZone && dist(v1EnemyShot.x, v1EnemyShot.y, v1Player.x, v1Player.y) < v1Player.size / 2) {
+            resetStats();
+            state = "lose";
+            return;
         }
+
+        if (v1EnemyShot.x < -300) v1EnemyShot.x = null;
     }
 
-    //Straight-line boss shot
+    //Straight shot
     if (v1StraightShot.x === null) {
         v1StraightShot.x = v1Boss.x - 20;
         v1StraightShot.y = v1Boss.y;
@@ -259,28 +320,59 @@ function v1Draw() {
         fill(100, 255, 200);
         ellipse(v1StraightShot.x, v1StraightShot.y, v1StraightShot.size, v1StraightShot.size);
 
-        //Out of bounds
-        if (v1StraightShot.x < -50) v1StraightShot.x = null;
-
-        //Player hit (only outside neutral zone)
         if (!inZone && dist(v1StraightShot.x, v1StraightShot.y, v1Player.x, v1Player.y) < v1Player.size / 2) {
             resetStats();
-            state = "menu";
-
-            //Spawn new straight shot
-            v1StraightShot.x = v1Boss.x - 20;
-            v1StraightShot.y = v1Boss.y;
+            state = "lose";
+            return;
         }
+
+        if (v1StraightShot.x < -50) v1StraightShot.x = null;
     }
 
-    //UI + controls
+    //Shockwave attack
+v1Shockwave.cooldown--;
+if (v1Shockwave.cooldown <= 0 && !v1Shockwave.active) {
+    v1Shockwave.active = true;
+    v1Shockwave.radius = 0;
+    v1Shockwave.cooldown = 300;
+}
+
+if (v1Shockwave.active) {
+    v1Shockwave.radius += 12;
+
+    //Shockwave visible ring
+    noFill();
+    stroke(255, 150, 80, 130);
+    strokeWeight(12);
+    ellipse(v1Boss.x, v1Boss.y, v1Shockwave.radius, v1Shockwave.radius);
+
+    //Precise ring detection
+    let distToPlayer = dist(v1Boss.x, v1Boss.y, v1Player.x, v1Player.y);
+    let ringEdge = v1Shockwave.radius / 2;
+    let hit = abs(distToPlayer - ringEdge) < 12;
+
+    if (!inZone && hit) {
+        resetStats();
+        state = "lose";
+        return;
+    }
+
+    if (v1Shockwave.radius > v1Shockwave.maxRadius) {
+        v1Shockwave.active = false;
+        v1Shockwave.radius = 0;
+    }
+
+    strokeWeight(1);
+}
+
+
+    //UI
     fill(255);
     textSize(16);
     textAlign(LEFT, TOP);
-    text("Click to shoot\nWASD to move\nNeutral zone = safe", 10, 10);
+    text("Click to shoot\nWASD to move\nNeutral zone = safe", 10, 50);
 }
 
-//Shoot if player is not in neutral zone
 function v1MousePressed() {
     let inZone = v1Player.x > v1Zone.x && v1Player.x < v1Zone.x + v1Zone.w;
 
@@ -290,9 +382,11 @@ function v1MousePressed() {
     }
 }
 
-//Return to menu
 function v1KeyPressed(event) {
-    if (event.keyCode === 27) resetStats(), state = "menu";
+    if (event.keyCode === 27) {
+        resetStats();
+        state = "menu";
+    }
 }
 
 /**
