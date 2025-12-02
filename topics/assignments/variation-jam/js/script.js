@@ -330,40 +330,40 @@ function v1Draw() {
     }
 
     //Shockwave attack
-v1Shockwave.cooldown--;
-if (v1Shockwave.cooldown <= 0 && !v1Shockwave.active) {
-    v1Shockwave.active = true;
-    v1Shockwave.radius = 0;
-    v1Shockwave.cooldown = 300;
-}
-
-if (v1Shockwave.active) {
-    v1Shockwave.radius += 12;
-
-    //Shockwave visible ring
-    noFill();
-    stroke(255, 150, 80, 130);
-    strokeWeight(12);
-    ellipse(v1Boss.x, v1Boss.y, v1Shockwave.radius, v1Shockwave.radius);
-
-    //Precise ring detection
-    let distToPlayer = dist(v1Boss.x, v1Boss.y, v1Player.x, v1Player.y);
-    let ringEdge = v1Shockwave.radius / 2;
-    let hit = abs(distToPlayer - ringEdge) < 12;
-
-    if (!inZone && hit) {
-        resetStats();
-        state = "lose";
-        return;
-    }
-
-    if (v1Shockwave.radius > v1Shockwave.maxRadius) {
-        v1Shockwave.active = false;
+    v1Shockwave.cooldown--;
+    if (v1Shockwave.cooldown <= 0 && !v1Shockwave.active) {
+        v1Shockwave.active = true;
         v1Shockwave.radius = 0;
+        v1Shockwave.cooldown = 300;
     }
 
-    strokeWeight(1);
-}
+    if (v1Shockwave.active) {
+        v1Shockwave.radius += 12;
+
+        //Shockwave visible ring
+        noFill();
+        stroke(255, 150, 80, 130);
+        strokeWeight(12);
+        ellipse(v1Boss.x, v1Boss.y, v1Shockwave.radius, v1Shockwave.radius);
+
+        //Precise ring detection
+        let distToPlayer = dist(v1Boss.x, v1Boss.y, v1Player.x, v1Player.y);
+        let ringEdge = v1Shockwave.radius / 2;
+        let hit = abs(distToPlayer - ringEdge) < 12;
+
+        if (!inZone && hit) {
+            resetStats();
+            state = "lose";
+            return;
+        }
+
+        if (v1Shockwave.radius > v1Shockwave.maxRadius) {
+            v1Shockwave.active = false;
+            v1Shockwave.radius = 0;
+        }
+
+        strokeWeight(1);
+    }
 
 
     //UI
@@ -382,348 +382,225 @@ function v1MousePressed() {
     }
 }
 
-function v1KeyPressed(event) {
-    if (event.keyCode === 27) {
-        resetStats();
-        state = "menu";
-    }
-}
-
 /**
- * Variation #2 of Yars Revenge
- * x
+ * Variation #2 — Yars Revenge PvP
  */
 
-//Copy of v1 but different background
-//Use JSON to parse and string v1 stats and copy them (will change later)
-let v2Player = JSON.parse(JSON.stringify(v1Player));
-let v2Missile = JSON.parse(JSON.stringify(v1Missile));
-let v2Boss = JSON.parse(JSON.stringify(v1Boss));
-let v2EnemyShot = JSON.parse(JSON.stringify(v1EnemyShot));
-let v2StraightShot = JSON.parse(JSON.stringify(v1StraightShot));
-let v2Zone = JSON.parse(JSON.stringify(v1Zone));
+//Player 1 (Yar)
+let v2Player1 = {
+    x: 20,
+    y: 250,
+    speed: 3,
+    size: 26,
+};
+
+//Boss Player 2
+let v2Boss = {
+    x: 380,
+    y: 250,
+    size: 45,
+    speed: 3,
+    health: 5
+};
+
+//Player 1 missile
+let v2Missile = {
+    x: null,
+    y: null,
+    speed: 8,
+    w: 8,
+    h: 3
+};
+
+//Boss straight shot
+let v2StraightShot = {
+    x: null,
+    y: null,
+    speed: 5,
+    size: 16
+};
+
+//Boss shockwave
+let v2Shockwave = {
+    active: false,
+    radius: 0,
+    maxRadius: 1200
+};
+
+//Neutral zone
+let v2Zone = {
+    x: 75,
+    w: 55,
+    h: 0
+};
 
 function v2Setup() {
-    resetV2Stats();
+    resetV2();
 }
 
-function resetV2Stats() {
-    v2Player.x = 20;
-    v2Player.y = height / 2;
-    v2Boss.x = width - 140;
+function resetV2() {
+    v2Player1.x = 20;
+    v2Player1.y = height / 2;
+
+    v2Boss.x = 380;
     v2Boss.y = height / 2;
     v2Boss.health = 5;
-    v2Boss.fireCooldown = 0;
+
     v2Missile.x = null;
-    v2EnemyShot.x = null;
     v2StraightShot.x = null;
+
+    v2Shockwave.active = false;
+    v2Shockwave.radius = 0;
+
     v2Zone.h = height;
 }
 
 function v2Draw() {
-    background(100, 200, 100); //Different bg
+    background(50, 70, 130);
 
-    //Everything else same as v1 but with v2 variables
-    //Draw neutral zone
+    //Neutral zone brighter
     rectMode(CORNER);
     noStroke();
-    fill(140, 110, 220, 100);
+    fill(190, 170, 255, 110);
     rect(v2Zone.x, 0, v2Zone.w, v2Zone.h);
 
-    //WASD movement
-    if (keyIsDown(87)) v2Player.y -= v2Player.speed;
-    if (keyIsDown(83)) v2Player.y += v2Player.speed;
-    if (keyIsDown(65)) v2Player.x -= v2Player.speed;
-    if (keyIsDown(68)) v2Player.x += v2Player.speed;
+    //Player 1 WASD
+    if (keyIsDown(87)) v2Player1.y -= v2Player1.speed;
+    if (keyIsDown(83)) v2Player1.y += v2Player1.speed;
+    if (keyIsDown(65)) v2Player1.x -= v2Player1.speed;
+    if (keyIsDown(68)) v2Player1.x += v2Player1.speed;
 
-    v2Player.x = constrain(v2Player.x, 0, width);
-    v2Player.y = constrain(v2Player.y, 0, height);
+    v2Player1.x = constrain(v2Player1.x, 0, width);
+    v2Player1.y = constrain(v2Player1.y, 0, height);
 
-    let inZone = v2Player.x > v2Zone.x && v2Player.x < v2Zone.x + v2Zone.w;
+    let inZone = v2Player1.x > v2Zone.x && v2Player1.x < v2Zone.x + v2Zone.w;
 
-    //Player sprite
+    //Player 1 sprite
     push();
-    translate(v2Player.x, v2Player.y);
+    translate(v2Player1.x, v2Player1.y);
     noStroke();
-    fill(255, 180, 0);
-    ellipse(0, 0, v2Player.size, v2Player.size * 0.6);
+    fill(255, 190, 50);
+    ellipse(0, 0, v2Player1.size, v2Player1.size * 0.6);
     fill(0);
     ellipse(8, -5, 6, 6);
     ellipse(8, 5, 6, 6);
     pop();
 
+    //Boss movement up and down
+    if (keyIsDown(UP_ARROW)) v2Boss.y -= v2Boss.speed;
+    if (keyIsDown(DOWN_ARROW)) v2Boss.y += v2Boss.speed;
+
+    //Locked in place
+    v2Boss.x = 380;
+    v2Boss.y = constrain(v2Boss.y, 40, height - 40);
+
+    //Boss sprite
+    fill(255, 60, 100);
+    ellipse(v2Boss.x, v2Boss.y, v2Boss.size);
+
+    //Boss health bar
+    rectMode(CORNER);
+    fill(255);
+    rect(20, 20, 200, 12);
+    fill(255, 80, 120);
+    rect(20, 20, (v2Boss.health / 5) * 200, 12);
+
     //Player missile
     if (v2Missile.x !== null) {
         v2Missile.x += v2Missile.speed;
+
         fill(255, 240, 50);
         rectMode(CENTER);
         rect(v2Missile.x, v2Missile.y, v2Missile.w, v2Missile.h);
-        if (v2Missile.x > width + 100) v2Missile.x = null;
+
+        if (v2Missile.x > width + 40) v2Missile.x = null;
 
         if (dist(v2Missile.x, v2Missile.y, v2Boss.x, v2Boss.y) < v2Boss.size / 2) {
             v2Missile.x = null;
             v2Boss.health--;
+
             if (v2Boss.health <= 0) {
-                resetV2Stats();
-                state = "menu";
+                resetV2();
+                state = "win";
                 return;
             }
         }
     }
 
-    //Simple boss movement
-    v2Boss.y += v2Boss.ySpeed;
-    if (v2Boss.y < 40 || v2Boss.y > height - 40) v2Boss.ySpeed *= -1;
-
-    //Boss sprite
-    fill(255, 60, 80);
-    ellipse(v2Boss.x, v2Boss.y, v2Boss.size, v2Boss.size);
-    fill(255, 200, 200);
-    ellipse(v2Boss.x + 10, v2Boss.y - 10, 10, 10);
-    ellipse(v2Boss.x + 10, v2Boss.y + 10, 10, 10);
-
-    //Boss homing missile
-    if (v2EnemyShot.x === null) {
-        v2Boss.fireCooldown--;
-        if (v2Boss.fireCooldown <= 0) {
-            v2EnemyShot.x = v2Boss.x - 20;
-            v2EnemyShot.y = v2Boss.y;
-            v2Boss.fireCooldown = 90;
-        }
-    }
-
-    if (v2EnemyShot.x !== null) {
-        let dx = v2Player.x - v2EnemyShot.x;
-        let dy = v2Player.y - v2EnemyShot.y;
-        let mag = sqrt(dx * dx + dy * dy);
-        v2EnemyShot.x += (dx / mag) * v2EnemyShot.speed;
-        v2EnemyShot.y += (dy / mag) * v2EnemyShot.speed;
-
-        fill(255, 100, 140);
-        ellipse(v2EnemyShot.x, v2EnemyShot.y, v2EnemyShot.size, v2EnemyShot.size);
-
-        if (v2EnemyShot.x < -300) v2EnemyShot.x = null;
-
-        if (!inZone) {
-            let hit = dist(v2EnemyShot.x, v2EnemyShot.y, v2Player.x, v2Player.y);
-            if (hit < v2Player.size / 2) {
-                resetV2Stats();
-                state = "menu";
-
-                v2EnemyShot.x = v2Boss.x - 20;
-                v2EnemyShot.y = v2Boss.y;
-                v2Boss.fireCooldown = 90;
-            }
-        }
-    }
-
-    //Straight-line boss shot
-    if (v2StraightShot.x === null) {
-        v2StraightShot.x = v2Boss.x - 20;
-        v2StraightShot.y = v2Boss.y;
-    }
-
+    //Boss straight shot
     if (v2StraightShot.x !== null) {
         v2StraightShot.x -= v2StraightShot.speed;
-        fill(100, 255, 200);
-        ellipse(v2StraightShot.x, v2StraightShot.y, v2StraightShot.size, v2StraightShot.size);
+
+        fill(80, 255, 200);
+        ellipse(v2StraightShot.x, v2StraightShot.y, v2StraightShot.size);
+
+        if (!inZone && dist(v2StraightShot.x, v2StraightShot.y, v2Player1.x, v2Player1.y) < v2Player1.size / 2) {
+            resetV2();
+            state = "lose";
+            return;
+        }
 
         if (v2StraightShot.x < -50) v2StraightShot.x = null;
+    }
 
-        if (!inZone && dist(v2StraightShot.x, v2StraightShot.y, v2Player.x, v2Player.y) < v2Player.size / 2) {
-            resetV2Stats();
-            state = "menu";
+    //Boss shockwave
+    if (v2Shockwave.active) {
+        v2Shockwave.radius += 14;
 
+        noFill();
+        stroke(255, 150, 80, 140);
+        strokeWeight(12);
+        ellipse(v2Boss.x, v2Boss.y, v2Shockwave.radius);
+
+        let distToPlayer = dist(v2Boss.x, v2Boss.y, v2Player1.x, v2Player1.y);
+        let ringEdge = v2Shockwave.radius / 2;
+        let hit = abs(distToPlayer - ringEdge) < 12;
+
+        if (!inZone && hit) {
+            resetV2();
+            state = "lose";
+            return;
+        }
+
+        if (v2Shockwave.radius > v2Shockwave.maxRadius) {
+            v2Shockwave.active = false;
+            v2Shockwave.radius = 0;
+        }
+        strokeWeight(1);
+    }
+
+    //UI
+    fill(255);
+    textAlign(LEFT, TOP);
+    textSize(15);
+    text("P1: WASD + Click\nP2: Up/Down, ← = Shoot, → = Shockwave", 10, 55);
+}
+
+//Player 1 fire
+function v2MousePressed() {
+    let inZone = v2Player1.x > v2Zone.x && v2Player1.x < v2Zone.x + v2Zone.w;
+
+    if (mouseButton === LEFT && v2Missile.x === null && !inZone) {
+        v2Missile.x = v2Player1.x;
+        v2Missile.y = v2Player1.y;
+    }
+}
+
+//Boss fire inputs
+function v2KeyPressed(event) {
+    //Left arrow = straight shot
+    if (event.keyCode === LEFT_ARROW) {
+        if (v2StraightShot.x === null) {
             v2StraightShot.x = v2Boss.x - 20;
             v2StraightShot.y = v2Boss.y;
         }
     }
 
-    fill(255);
-    textSize(16);
-    textAlign(LEFT, TOP);
-    text("Click to shoot\nWASD to move\nNeutral zone = safe", 10, 10);
-}
-
-function v2MousePressed() {
-    let inZone = v2Player.x > v2Zone.x && v2Player.x < v2Zone.x + v2Zone.w;
-
-    if (mouseButton === LEFT && v2Missile.x === null && !inZone) {
-        v2Missile.x = v2Player.x;
-        v2Missile.y = v2Player.y;
-    }
-}
-
-function v2KeyPressed(event) {
-    if (event.keyCode === 27) resetV2Stats(), state = "menu";
-}
-
-
-/**
- * Variation #3 of Yars Revenge
- * x
- */
-
-//Copy of v1 but different background
-//Use JSON to parse and string v1 stats and copy them (will change later)
-let v3Player = JSON.parse(JSON.stringify(v1Player));
-let v3Missile = JSON.parse(JSON.stringify(v1Missile));
-let v3Boss = JSON.parse(JSON.stringify(v1Boss));
-let v3EnemyShot = JSON.parse(JSON.stringify(v1EnemyShot));
-let v3StraightShot = JSON.parse(JSON.stringify(v1StraightShot));
-let v3Zone = JSON.parse(JSON.stringify(v1Zone));
-
-function v3Setup() {
-    resetV3Stats();
-}
-
-function resetV3Stats() {
-    v3Player.x = 20;
-    v3Player.y = height / 2;
-    v3Boss.x = width - 140;
-    v3Boss.y = height / 2;
-    v3Boss.health = 5;
-    v3Boss.fireCooldown = 0;
-    v3Missile.x = null;
-    v3EnemyShot.x = null;
-    v3StraightShot.x = null;
-    v3Zone.h = height;
-}
-
-function v3Draw() {
-    background(150, 150, 255); //Different bg
-
-    //Everything else same as v1 but with v3 variables
-    //Draw neutral zone
-    rectMode(CORNER);
-    noStroke();
-    fill(140, 110, 220, 100);
-    rect(v3Zone.x, 0, v3Zone.w, v3Zone.h);
-
-    //WASD movement
-    if (keyIsDown(87)) v3Player.y -= v3Player.speed;
-    if (keyIsDown(83)) v3Player.y += v3Player.speed;
-    if (keyIsDown(65)) v3Player.x -= v3Player.speed;
-    if (keyIsDown(68)) v3Player.x += v3Player.speed;
-
-    v3Player.x = constrain(v3Player.x, 0, width);
-    v3Player.y = constrain(v3Player.y, 0, height);
-
-    let inZone = v3Player.x > v3Zone.x && v3Player.x < v3Zone.x + v3Zone.w;
-
-    //Player sprite
-    push();
-    translate(v3Player.x, v3Player.y);
-    noStroke();
-    fill(255, 180, 0);
-    ellipse(0, 0, v3Player.size, v3Player.size * 0.6);
-    fill(0);
-    ellipse(8, -5, 6, 6);
-    ellipse(8, 5, 6, 6);
-    pop();
-
-    //Player missile
-    if (v3Missile.x !== null) {
-        v3Missile.x += v3Missile.speed;
-        fill(255, 240, 50);
-        rectMode(CENTER);
-        rect(v3Missile.x, v3Missile.y, v3Missile.w, v3Missile.h);
-        if (v3Missile.x > width + 100) v3Missile.x = null;
-
-        if (dist(v3Missile.x, v3Missile.y, v3Boss.x, v3Boss.y) < v3Boss.size / 2) {
-            v3Missile.x = null;
-            v3Boss.health--;
-            if (v3Boss.health <= 0) {
-                resetV3Stats();
-                state = "menu";
-                return;
-            }
+    //Right arrow = shockwave
+    if (event.keyCode === RIGHT_ARROW) {
+        if (!v2Shockwave.active) {
+            v2Shockwave.active = true;
+            v2Shockwave.radius = 0;
         }
     }
-
-    //Simple boss movement
-    v3Boss.y += v3Boss.ySpeed;
-    if (v3Boss.y < 40 || v3Boss.y > height - 40) v3Boss.ySpeed *= -1;
-
-    //Boss sprite
-    fill(255, 60, 80);
-    ellipse(v3Boss.x, v3Boss.y, v3Boss.size, v3Boss.size);
-    fill(255, 200, 200);
-    ellipse(v3Boss.x + 10, v3Boss.y - 10, 10, 10);
-    ellipse(v3Boss.x + 10, v3Boss.y + 10, 10, 10);
-
-    //Boss homing missile
-    if (v3EnemyShot.x === null) {
-        v3Boss.fireCooldown--;
-        if (v3Boss.fireCooldown <= 0) {
-            v3EnemyShot.x = v3Boss.x - 20;
-            v3EnemyShot.y = v3Boss.y;
-            v3Boss.fireCooldown = 90;
-        }
-    }
-
-    if (v3EnemyShot.x !== null) {
-        let dx = v3Player.x - v3EnemyShot.x;
-        let dy = v3Player.y - v3EnemyShot.y;
-        let mag = sqrt(dx * dx + dy * dy);
-        v3EnemyShot.x += (dx / mag) * v3EnemyShot.speed;
-        v3EnemyShot.y += (dy / mag) * v3EnemyShot.speed;
-
-        fill(255, 100, 140);
-        ellipse(v3EnemyShot.x, v3EnemyShot.y, v3EnemyShot.size, v3EnemyShot.size);
-
-        if (v3EnemyShot.x < -300) v3EnemyShot.x = null;
-
-        if (!inZone) {
-            let hit = dist(v3EnemyShot.x, v3EnemyShot.y, v3Player.x, v3Player.y);
-            if (hit < v3Player.size / 2) {
-                resetV3Stats();
-                state = "menu";
-
-                v3EnemyShot.x = v3Boss.x - 20;
-                v3EnemyShot.y = v3Boss.y;
-                v3Boss.fireCooldown = 90;
-            }
-        }
-    }
-
-    //Straight-line boss shot
-    if (v3StraightShot.x === null) {
-        v3StraightShot.x = v3Boss.x - 20;
-        v3StraightShot.y = v3Boss.y;
-    }
-
-    if (v3StraightShot.x !== null) {
-        v3StraightShot.x -= v3StraightShot.speed;
-        fill(100, 255, 200);
-        ellipse(v3StraightShot.x, v3StraightShot.y, v3StraightShot.size, v3StraightShot.size);
-
-        if (v3StraightShot.x < -50) v3StraightShot.x = null;
-
-        if (!inZone && dist(v3StraightShot.x, v3StraightShot.y, v3Player.x, v3Player.y) < v3Player.size / 2) {
-            resetV3Stats();
-            state = "menu";
-
-            v3StraightShot.x = v3Boss.x - 20;
-            v3StraightShot.y = v3Boss.y;
-        }
-    }
-
-    fill(255);
-    textSize(16);
-    textAlign(LEFT, TOP);
-    text("Click to shoot\nWASD to move\nNeutral zone = safe", 10, 10);
-}
-
-function v3MousePressed() {
-    let inZone = v3Player.x > v3Zone.x && v3Player.x < v3Zone.x + v3Zone.w;
-
-    if (mouseButton === LEFT && v3Missile.x === null && !inZone) {
-        v3Missile.x = v3Player.x;
-        v3Missile.y = v3Player.y;
-    }
-}
-
-function v3KeyPressed(event) {
-    if (event.keyCode === 27) resetV3Stats(), state = "menu";
 }
