@@ -122,7 +122,7 @@ function loseDraw() {
 }
 
 /**
- * Variation #1 — Yars Revenge default
+ * Variation #1 — Yars Revenge in p5
  */
 
 let v1Player = {
