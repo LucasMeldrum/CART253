@@ -2,7 +2,7 @@
 
 LUCAS MELDRUM
 
-[View this project online](URL_FOR_THE_RUNNING_PROJECT)
+[View this project online](https://lucasmeldrum.github.io/CART253/topics/assignments/variation-jam)
 
 ## Description
 This project combines three versions of the Atari 1982 game Yars Revenge:
