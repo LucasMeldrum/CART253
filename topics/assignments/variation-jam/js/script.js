@@ -1,10 +1,8 @@
 /**
- * Variation Menu
- * Pippin Barr
- * 
- * A relatively simple example of a set of variations within a single
- * project. (When we learn Object-Oriented Programming this will be a
- * LOT easier.)
+ * Variation Jam of Yars revenge containing 3 different versions:
+ * 1. Yars revenge remade in p5
+ * 2. PvP Yars revenge (one is the boss one is the player)
+ * 3. Yars revenge in the dark (turn volume up)
  */
 
 "use strict";

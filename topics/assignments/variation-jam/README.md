@@ -1,35 +1,31 @@
-# TITLE OF PROJECT
+# Yars Revenge Variation Jam
 
-AUTHOR NAME
+LUCAS MELDRUM
 
 [View this project online](URL_FOR_THE_RUNNING_PROJECT)
 
 ## Description
+This project combines three versions of the Atari 1982 game Yars Revenge:
 
-This description should help the reader understand what the program is, anything they should know to be able to experience it (controls, special features, etc.), and what the desired user experience is. For example:
+#### Variation 1 - Yars Revenge in p5
+A straightforward remake of the original Yars Revenge concept. The player controls the Yar using WASD and shoots with Mouse1. Use the neutral zone to dodge attacks and protect yourself, you only have one life!
 
-> *The Mayor of Clown Town* is a simulator experience that allows the user to control a small town populated entirely by clowns.
+---
 
-> The experience is controlled via the mouse, with left click selecting a clown and bringing up a menu of options such as "slip of banana peel" or "get into impossible capacious clown-car."
+#### Variation 2 - PvP  Mode
+Same Yars Revenge but now you can play against your friend! One player is Yar (WASD and Mouse1 again) and the other controls the boss (use up/down arrow keys to move, left to shoot and right for shockwave). Challenge your friend to a duel!
 
-> The project is meant to give the user a sense of what it would be the mayor of a town of clowns, eventually getting the sense that clowns are not taking their civic duties seriously.
+---
 
-## Screenshot(s)
+#### Variation 3 - Dark/Sound Mode
+A tense variation where most of the screen is dark. Dynamic light circles follow the player, boss, bullets, and shockwaves, limiting visibility and turning every movement into a risk. Awareness and tracking become the real challenge!
 
-This bit should have some images of the program running so that the reader has a sense of what it looks like. For example:
-
-> ![Image of a clown face](./assets/images/clown.png)
 
 ## Attribution
 
-This bit should attribute any code, assets or other elements used taken from other sources. For example:
-
 > - This project uses [p5.js](https://p5js.org).
-> - The clown image is a capture of the clown from the Apple emoji character set.
-> - The barking sound effect is "single dog bark 1" by crazymonke9 from freesound.org: https://freesound.org/people/crazymonke9/sounds/418107/
+> - Sounds were all taken from pixabay.com: https://pixabay.com/sound-effects/
 
 ## License
-
-This bit should include the license you want to apply to your work. For example:
 
 > This project is licensed under a Creative Commons Attribution ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.en)) license with the exception of libraries and other components with their own licenses.
